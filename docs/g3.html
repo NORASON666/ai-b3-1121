@@ -177,6 +177,7 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 #secchip{position:fixed;left:14px;top:12px;z-index:11;display:flex;gap:6px;padding:5px;background:rgba(255,255,255,.92);border:2px solid var(--navy);border-radius:22px;box-shadow:0 4px 14px rgba(30,58,110,.2)}
 #secchip button{font:700 15px "Noto Sans TC";border:none;background:#fff;color:var(--navy);border-radius:14px;padding:6px 12px;cursor:pointer}
 #secchip button.act{background:var(--orange);color:#fff}
+#secchip .g3btn{border-left:2px solid var(--line);border-radius:0 14px 14px 0}
 @media print{#secchip{display:none}}
 /* 酷AI 元素（取自 ailms.tp.edu.tw 首頁）：logo 膠囊、吉祥物插圖 */
 #tpbar{background:linear-gradient(90deg,#2BB5A8,#5CCFC2);border-radius:999px;padding:5px 16px 5px 12px;color:#fff}
@@ -316,7 +317,7 @@ body.uiidle #bar,body.uiidle #secchip{opacity:0;pointer-events:none}
 <div id="timerBadge" title="點一下打開計時設定"><span id="tLeft">05:00</span><span class="bar"><i id="tBar"></i></span></div>
 <div id="edgeGlow"></div>
 <div id="timesUp">時間到！</div>
-<nav id="secchip"><button data-go="nav">導覽 H</button><button data-go="m1">模組一 1</button><button data-go="m2">模組二 2</button><button data-go="m3">模組三 3</button></nav>
+<nav id="secchip"><button data-go="nav">導覽 H</button><button data-go="m1">模組一 1</button><button data-go="m2">模組二 2</button><button data-go="m3">模組三 3</button><button data-href="g3.html" class="g3btn">上午報告 第三組</button></nav>
 <nav id="bar"><button id="bPrev">◀</button><button id="bTimer">⏱ 計時 T</button><button id="bGrid">總覽 O</button><button id="bSup">補充 S</button><button id="bNotes">講稿 N</button><button id="bFull">全螢幕 F</button><button id="bNext">▶</button></nav>
 <script>
 const SIDE=[{"n": "1", "notes": "我們第三組抽到風險三：AI 幻覺與偏見。我們準備了國小、國中、高中各一個課堂。", "sup": ""}, {"n": "2", "notes": "最好的討論點是：很多時候學生自己的畫和 AI 的圖一樣有刻板印象。AI 的偏見是從人類身上學來的。", "sup": ""}, {"n": "3", "notes": "用這句收尾，讓學生反思自己的刻板印象，再用 FACT 的 T 改寫提示詞，讓畫面多元。", "sup": ""}, {"n": "4", "notes": "指引 p.141–145。", "sup": ""}, {"n": "5", "notes": "FACT：找出可疑、追問依據、查證比對、修正轉化。", "sup": ""}, {"n": "6", "notes": "三個學段：國小美術談偏見，國中社會談幻覺加偏見，高中數學用一題素養題同時抓幻覺和偏見。", "sup": ""}, {"n": "7", "notes": "題材是原住民族或不同性別在歷史與社會中的角色，這類主題 AI 最容易出現過度簡化與刻板印象。", "sup": ""}, {"n": "8", "notes": "查證比對給最多時間，12 分鐘。最後每組上台只說一句最關鍵的修正點。", "sup": ""}, {"n": "9", "notes": "第二個國中社會的設計，用 AI 生成的圖片當素材，融入性別平等議題。", "sup": ""}, {"n": "10", "notes": "查證時用政府的性別統計數據，學生會發現 AI 畫面和真實比例不一樣。", "sup": ""}, {"n": "11", "notes": "老師可以先準備好幾組圖發給各組，課堂比較順；設備夠的話也可以讓學生直接生圖。", "sup": ""}, {"n": "12", "notes": "某高中用 AI 選數理資優獎學金。5 位候選學生的分數如表。", "sup": ""}, {"n": "13", "notes": "請學生先不要算，直覺看：哪裡怪怪的？", "sup": ""}, {"n": "14", "notes": "兩題分別對應幻覺和偏見。", "sup": ""}, {"n": "15", "notes": "平均數 400÷5=80，AI 算對。離均差平方加起來 250，除以 5 是 50，開根號約 7.07。AI 說 25，還據此說「兩極化」，這就是幻覺。", "sup": ""}, {"n": "16", "notes": "門檻約 87.07 分，只有丁 90 分過關。AI 因為歷史資料裡男性得獎者多，推薦了沒過門檻的甲和乙，這就是資料偏見。", "sup": ""}, {"n": "17", "notes": "B 的清單可以直接當作業單。", "sup": ""}, {"n": "18", "notes": "以上是第三組的分享，謝謝。", "sup": ""}];
@@ -382,7 +383,8 @@ bTimer.onclick=()=>tp.classList.toggle('open');
 tp.addEventListener('keydown',e=>e.stopPropagation());
 
 // 導覽：卡片與左上角按鈕跳到各模組第一頁；H 導覽頁、1/2/3 模組
-function goSec(g){const k=g==='nav'?slides.findIndex(s=>s.classList.contains('t-nav')):slides.findIndex(s=>s.dataset.sec===g);if(k>=0)show(k);}
+function goSec(g){const k=g==='nav'?slides.findIndex(s=>s.classList.contains('t-nav')):slides.findIndex(s=>s.dataset.sec===g);if(k>=0)show(k);else location.href='index.html?go='+g;}
+document.addEventListener('click',e=>{const h=e.target.closest('[data-href]');if(h){e.stopPropagation();location.href=h.dataset.href;}});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){e.stopPropagation();goSec(b.dataset.go);}});
 addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea'))return;const k=e.key;
   if(k==='h'||k==='H')goSec('nav');else if(k==='1')goSec('m1');else if(k==='2')goSec('m2');else if(k==='3')goSec('m3');});
@@ -394,6 +396,8 @@ document.querySelectorAll('.slide').forEach(sl=>{const k=document.createElement(
 (function(){let tm;const b=document.body;function wake(){b.classList.add('uiwake');b.classList.remove('uiidle');clearTimeout(tm);tm=setTimeout(()=>{b.classList.remove('uiwake');b.classList.add('uiidle');},2000);}
 addEventListener('mousemove',wake,{passive:true});addEventListener('touchstart',wake,{passive:true});})();
 addEventListener('resize',fit);fit();
+{const g=new URLSearchParams(location.search).get('go');if(g)setTimeout(()=>goSec(g),0);}
+if(/g3\.html/.test(location.pathname))document.querySelectorAll('#secchip .g3btn').forEach(b=>b.classList.add('act'));
 const m=decodeURIComponent(location.hash).match(/^#p(.+)$/);const k0=m?slides.findIndex(s=>s.dataset.label===m[1]):0;show(k0<0?0:k0);
 </script>
 <div id="zoom"><img alt=""></div>
