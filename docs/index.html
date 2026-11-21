@@ -500,18 +500,27 @@ const netPulse=pulses(net,E,22,0xF2994A,20);
 
 // ── 2. 臺北 101（低多邊形線框）：封面／章節是天際線大圖，內容頁是右上角小模型
 function make101(g,s,edgeCol){
-  const face=g.mat(new THREE.MeshBasicMaterial({color:0xEAF3FC}),1),face2=g.mat(new THREE.MeshBasicMaterial({color:0xD3E2F4}),1),
-        edge=g.mat(new THREE.LineBasicMaterial({color:edgeCol}),1);
+  // 臺北 101：玻璃藍綠、有光影；兩個面受光不同，看得出立體
+  const M=(c)=>g.mat(new THREE.MeshLambertMaterial({color:c,flatShading:true}),1);
+  const glass=M(0x9FD3CF),glass2=M(0x7FBFC0),podium=M(0xC9DCE8),cap=M(0xB7D8D4),
+        edge=g.mat(new THREE.LineBasicMaterial({color:edgeCol}),.55),band=g.mat(new THREE.LineBasicMaterial({color:0xFFFFFF}),.7);
   const tw=new THREE.Group();g.add(tw);let y=0;
-  const put=(geo,h,m)=>{const me=new THREE.Mesh(geo,m||face);me.position.y=y+h/2;me.rotation.y=Math.PI/4;tw.add(me);
-    const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),edge);l.position.copy(me.position);l.rotation.copy(me.rotation);tw.add(l);y+=h;};
-  put(new THREE.CylinderGeometry(46*s,54*s,40*s,4),40*s,face2);                 // 裙樓
-  put(new THREE.CylinderGeometry(30*s,38*s,70*s,4),70*s);                       // 基座（往上收）
-  for(let i=0;i<8;i++){put(new THREE.CylinderGeometry(37*s,25*s,38*s,4),38*s,i%2?face:face2);put(new THREE.CylinderGeometry(38*s,38*s,3*s,4),3*s,face2);} // 八節「花開富貴」往上外擴
-  put(new THREE.CylinderGeometry(19*s,29*s,24*s,4),24*s,face2);
-  put(new THREE.CylinderGeometry(10*s,13*s,20*s,4),20*s);
-  put(new THREE.CylinderGeometry(.8*s,3*s,82*s,6),82*s);                       // 塔尖
+  const put=(rt,rb,h,m,bands)=>{const geo=new THREE.CylinderGeometry(rt*s,rb*s,h*s,4,1);const me=new THREE.Mesh(geo,m);me.position.y=y+h*s/2;me.rotation.y=Math.PI/4;tw.add(me);
+    const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),edge);l.position.copy(me.position);l.rotation.copy(me.rotation);tw.add(l);
+    for(let k=1;k<=(bands||0);k++){const f=k/(bands+1),r=(rb+(rt-rb)*f)*s+.3,yy=y+h*s*f,P=[];             // 樓層窗帶
+      for(let q=0;q<4;q++){const a=q*Math.PI/2,b=a+Math.PI/2;P.push(new THREE.Vector3(Math.cos(a)*r,yy,Math.sin(a)*r),new THREE.Vector3(Math.cos(b)*r,yy,Math.sin(b)*r));}
+      tw.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(P),band));}
+    y+=h*s;};
+  put(58,62,26,podium,1);                       // 裙樓
+  put(27,37,118,glass2,5);                      // 基座：往上收
+  put(31,31,4,cap);
+  for(let i=0;i<8;i++){put(31,24,44,i%2?glass:glass2,3);put(32,32,3,cap);}   // 八節「花開富貴」：每節往上外擴
+  put(17,23,22,cap,1); put(9,12,22,glass,1);    // 塔頂
+  put(.6,2.6,96,cap);                           // 塔尖
+  const tip=new THREE.Sprite(g.mat(new THREE.SpriteMaterial({map:tex,color:0xF2994A}),.9));tip.scale.set(18*s,18*s,1);tip.position.y=y;tw.add(tip);
   tw.top=y;return tw;}
+// 光源（只影響有光照材質的 101）
+scene.add(new THREE.AmbientLight(0xffffff,.78));const sun=new THREE.DirectionalLight(0xffffff,.65);sun.position.set(-400,600,500);scene.add(sun);
 // 酷AI 對話泡泡貼圖
 function bubbleTex(txt,bg){const c=document.createElement('canvas');c.width=256;c.height=160;const x=c.getContext('2d');
   x.fillStyle=bg;x.beginPath();x.roundRect(8,8,240,110,50);x.fill();x.beginPath();x.moveTo(70,112);x.lineTo(54,150);x.lineTo(110,114);x.fill();
@@ -520,14 +529,14 @@ const BUB=[['酷AI',0xF0A23B,'#F0A23B'],['AI',0x3B82C4,'#3B82C4'],['?',0x5AA9E6,
 
 // 2a. 天際線（封面／章節／結尾）
 const city=layer();city.position.set(0,-345,0);
-const T101=make101(city,1.15,0x1F3A6E);T101.position.set(-470,0,40);
+const T101=make101(city,.72,0x1F3A6E);T101.position.set(-470,0,40);T101.rotation.y=.42;
 const bx=[],bedge=city.mat(new THREE.LineBasicMaterial({color:0x6FA8DC}),.75),bface=city.mat(new THREE.MeshBasicMaterial({color:0xE7F1FB}),1),farEdge=city.mat(new THREE.LineBasicMaterial({color:0xB9D3EA}),.5),farFace=city.mat(new THREE.MeshBasicMaterial({color:0xF5F9FD}),1);
 for(let i=0;i<34;i++){const w=30+rnd()*60,h=40+rnd()*170,d=30+rnd()*50,x=-760+i*46+rnd()*20;if(Math.abs(x+470)<70)continue;
   const far=i%2===0,geo=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(geo,far?farFace:bface);m.position.set(x,h/2,far?-390:-120);city.add(m);
   const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),far?farEdge:bedge);l.position.copy(m.position);city.add(l);bx.push(m.position.clone().add(V(0,h/2,0)));}
 const bubs=Array.from({length:9},(_,i)=>{const sp=new THREE.Sprite(city.mat(new THREE.SpriteMaterial({map:BUB[i%BUB.length]}),.95));
   sp.scale.set(70,44,1);sp.u={o:bx[Math.floor(rnd()*bx.length)]||V(0,0,0),t:rnd(),v:.05+rnd()*.06};city.add(sp);return sp;});
-const tip=V(-470,T101.top+40,40),SK=bx.map(p=>[tip,p]).filter((_,i)=>i%3===0);
+const tip=V(-470,T101.top,40),SK=bx.map(p=>[tip,p]).filter((_,i)=>i%3===0);
 city.lines(SK.flat(),0xF2C48A,.35);const skyPulse=pulses(city,SK,10,0xF2994A,16);
 
 // 2b. 右上角小 101（內容頁）＋繞行的酷AI 泡泡

@@ -272,7 +272,7 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 <div id="stage"><div id="deck">
 <section class="slide t-cover" id="p1" data-label="1" data-sec="home"><div class="inner"><div class="cover"><div class="cover-text">
 <div class="org">B3 儲備講師培訓｜模組二 小組活動</div><h1>第三組<br><mark>AI 幻覺與偏見</mark></h1><div class="hand">國小、國中、高中，各一個課堂</div>
-<div class="meta">2026.11.21（六）　國立臺中教育大學</div><div class="who"><span>第三組（臺北市）　黃馨誼・周凡淇・何敏華・戴貝羽・涂朝淵</span></div></div></div></div><div class="pno">1</div></section>
+<div class="meta">2026.11.21（六）　國立臺中教育大學</div><div class="who"><span>第三組（臺北市）　黃馨誼・何敏華・戴貝羽・涂朝淵・周凡淇</span></div></div></div></div><div class="pno">1</div></section>
 <section class="slide t-case" id="p2" data-label="2" data-sec="home"><div class="inner"><div class="kicker">國小美術｜40 分鐘</div><div class="situation"><span class="tag">情境</span>「請畫一位○○」盲猜實驗</div>
 <ol class="steps qs"><li><span class="num">1</span><span>先讓學生自己畫：科學家、護理師、工程師、老師、廚師</span></li><li><span class="num">2</span><span>再揭曉 AI 生成同樣主題的圖</span></li><li><span class="num">3</span><span>一起比較：性別、年齡、膚色、穿著</span></li></ol><p class="foot">學生的畫和 AI 的圖常出現一樣的刻板印象：AI 的偏見是從人類身上學來的</p></div><div class="pno">2</div></section>
 <section class="slide t-quote" id="p3" data-label="3" data-sec="home"><div class="inner"><div class="kicker">國小美術｜討論的關鍵句</div><blockquote class="quote">AI 的偏見，<br>是從人類身上學來的。</blockquote><p class="foot">先看自己的畫，再看 AI 的圖：我們是不是也這樣想？</p></div><div class="pno">3</div></section>
@@ -293,7 +293,7 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 <section class="slide t-cards" id="p16" data-label="16" data-sec="home"><div class="inner"><div class="kicker">高中數學素養題｜解答 (2) 偏見</div><h2 class="title"><span>真正符合門檻的，只有丁</span></h2><div class="cards c2"><div class="card"><h3>客觀門檻</h3><p>μ + σ = 80 + √50 ≈ <b>87.07 分</b><br>甲 80、乙 85、丙 75、戊 70：都沒過<br>丁 90：<b>唯一符合</b></p></div><div class="card"><h3>AI 的偏見</h3><p>訓練資料裡「過去男性得獎者較多」<br>AI 無視丁高出平均超過 1 個 σ<br>反而推薦沒過門檻的甲、乙</p><div class=note>對丁造成性別不公</div></div></div><p class="foot">數學素養＋數位素養：用數據檢查 AI，而不是被 AI 的數據說服</p></div><div class="pno">16</div></section>
 <section class="slide t-cards" id="p17" data-label="17" data-sec="home"><div class="inner"><div class="kicker">子任務</div><h2 class="title"><span>評量怎麼改？AI 對話紀錄怎麼交？</span></h2><div class="cards c2"><div class="card"><h3>A 面對認知卸載</h3><p>最後一題不用 AI，口頭說明你怎麼發現錯誤<br>或課堂現場改寫，不帶回家</p></div><div class="card"><h3>B AI 對話紀錄清單</h3><p>① 問 AI 的原句　② AI 回答截圖<br>③ 圈出的可疑句　④ 查證來源（至少 2 個）<br>⑤ 修正後版本　⑥ 哪些是 AI 幫忙的</p></div></div></div><div class="pno">17</div></section>
 <section class="slide t-closing" id="p18" data-label="18" data-sec="home"><div class="inner"><div class="cover"><div class="cover-text"><h1><mark>謝謝聆聽！</mark></h1><div class="hand">用 AI 的答案，一定附查證來源</div>
-<div class="who"><span>第三組（臺北市）　黃馨誼・周凡淇・何敏華・戴貝羽・涂朝淵</span></div></div></div></div><div class="pno">18</div></section>
+<div class="who"><span>第三組（臺北市）　黃馨誼・何敏華・戴貝羽・涂朝淵・周凡淇</span></div></div></div></div><div class="pno">18</div></section>
 </div></div>
 <aside id="panel" aria-label="補充資料與講稿"><header>
 <button data-tab="sup" class="act">📎 補充資料</button><button data-tab="notes">🗒 講稿</button>
@@ -432,18 +432,27 @@ const netPulse=pulses(net,E,22,0xF2994A,20);
 
 // ── 2. 臺北 101（低多邊形線框）：封面／章節是天際線大圖，內容頁是右上角小模型
 function make101(g,s,edgeCol){
-  const face=g.mat(new THREE.MeshBasicMaterial({color:0xEAF3FC}),1),face2=g.mat(new THREE.MeshBasicMaterial({color:0xD3E2F4}),1),
-        edge=g.mat(new THREE.LineBasicMaterial({color:edgeCol}),1);
+  // 臺北 101：玻璃藍綠、有光影；兩個面受光不同，看得出立體
+  const M=(c)=>g.mat(new THREE.MeshLambertMaterial({color:c,flatShading:true}),1);
+  const glass=M(0x9FD3CF),glass2=M(0x7FBFC0),podium=M(0xC9DCE8),cap=M(0xB7D8D4),
+        edge=g.mat(new THREE.LineBasicMaterial({color:edgeCol}),.55),band=g.mat(new THREE.LineBasicMaterial({color:0xFFFFFF}),.7);
   const tw=new THREE.Group();g.add(tw);let y=0;
-  const put=(geo,h,m)=>{const me=new THREE.Mesh(geo,m||face);me.position.y=y+h/2;me.rotation.y=Math.PI/4;tw.add(me);
-    const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),edge);l.position.copy(me.position);l.rotation.copy(me.rotation);tw.add(l);y+=h;};
-  put(new THREE.CylinderGeometry(46*s,54*s,40*s,4),40*s,face2);                 // 裙樓
-  put(new THREE.CylinderGeometry(30*s,38*s,70*s,4),70*s);                       // 基座（往上收）
-  for(let i=0;i<8;i++){put(new THREE.CylinderGeometry(37*s,25*s,38*s,4),38*s,i%2?face:face2);put(new THREE.CylinderGeometry(38*s,38*s,3*s,4),3*s,face2);} // 八節「花開富貴」往上外擴
-  put(new THREE.CylinderGeometry(19*s,29*s,24*s,4),24*s,face2);
-  put(new THREE.CylinderGeometry(10*s,13*s,20*s,4),20*s);
-  put(new THREE.CylinderGeometry(.8*s,3*s,82*s,6),82*s);                       // 塔尖
+  const put=(rt,rb,h,m,bands)=>{const geo=new THREE.CylinderGeometry(rt*s,rb*s,h*s,4,1);const me=new THREE.Mesh(geo,m);me.position.y=y+h*s/2;me.rotation.y=Math.PI/4;tw.add(me);
+    const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),edge);l.position.copy(me.position);l.rotation.copy(me.rotation);tw.add(l);
+    for(let k=1;k<=(bands||0);k++){const f=k/(bands+1),r=(rb+(rt-rb)*f)*s+.3,yy=y+h*s*f,P=[];             // 樓層窗帶
+      for(let q=0;q<4;q++){const a=q*Math.PI/2,b=a+Math.PI/2;P.push(new THREE.Vector3(Math.cos(a)*r,yy,Math.sin(a)*r),new THREE.Vector3(Math.cos(b)*r,yy,Math.sin(b)*r));}
+      tw.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(P),band));}
+    y+=h*s;};
+  put(58,62,26,podium,1);                       // 裙樓
+  put(27,37,118,glass2,5);                      // 基座：往上收
+  put(31,31,4,cap);
+  for(let i=0;i<8;i++){put(31,24,44,i%2?glass:glass2,3);put(32,32,3,cap);}   // 八節「花開富貴」：每節往上外擴
+  put(17,23,22,cap,1); put(9,12,22,glass,1);    // 塔頂
+  put(.6,2.6,96,cap);                           // 塔尖
+  const tip=new THREE.Sprite(g.mat(new THREE.SpriteMaterial({map:tex,color:0xF2994A}),.9));tip.scale.set(18*s,18*s,1);tip.position.y=y;tw.add(tip);
   tw.top=y;return tw;}
+// 光源（只影響有光照材質的 101）
+scene.add(new THREE.AmbientLight(0xffffff,.78));const sun=new THREE.DirectionalLight(0xffffff,.65);sun.position.set(-400,600,500);scene.add(sun);
 // 酷AI 對話泡泡貼圖
 function bubbleTex(txt,bg){const c=document.createElement('canvas');c.width=256;c.height=160;const x=c.getContext('2d');
   x.fillStyle=bg;x.beginPath();x.roundRect(8,8,240,110,50);x.fill();x.beginPath();x.moveTo(70,112);x.lineTo(54,150);x.lineTo(110,114);x.fill();
@@ -452,14 +461,14 @@ const BUB=[['酷AI',0xF0A23B,'#F0A23B'],['AI',0x3B82C4,'#3B82C4'],['?',0x5AA9E6,
 
 // 2a. 天際線（封面／章節／結尾）
 const city=layer();city.position.set(0,-345,0);
-const T101=make101(city,1.15,0x1F3A6E);T101.position.set(-470,0,40);
+const T101=make101(city,.72,0x1F3A6E);T101.position.set(-470,0,40);T101.rotation.y=.42;
 const bx=[],bedge=city.mat(new THREE.LineBasicMaterial({color:0x6FA8DC}),.75),bface=city.mat(new THREE.MeshBasicMaterial({color:0xE7F1FB}),1),farEdge=city.mat(new THREE.LineBasicMaterial({color:0xB9D3EA}),.5),farFace=city.mat(new THREE.MeshBasicMaterial({color:0xF5F9FD}),1);
 for(let i=0;i<34;i++){const w=30+rnd()*60,h=40+rnd()*170,d=30+rnd()*50,x=-760+i*46+rnd()*20;if(Math.abs(x+470)<70)continue;
   const far=i%2===0,geo=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(geo,far?farFace:bface);m.position.set(x,h/2,far?-390:-120);city.add(m);
   const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),far?farEdge:bedge);l.position.copy(m.position);city.add(l);bx.push(m.position.clone().add(V(0,h/2,0)));}
 const bubs=Array.from({length:9},(_,i)=>{const sp=new THREE.Sprite(city.mat(new THREE.SpriteMaterial({map:BUB[i%BUB.length]}),.95));
   sp.scale.set(70,44,1);sp.u={o:bx[Math.floor(rnd()*bx.length)]||V(0,0,0),t:rnd(),v:.05+rnd()*.06};city.add(sp);return sp;});
-const tip=V(-470,T101.top+40,40),SK=bx.map(p=>[tip,p]).filter((_,i)=>i%3===0);
+const tip=V(-470,T101.top,40),SK=bx.map(p=>[tip,p]).filter((_,i)=>i%3===0);
 city.lines(SK.flat(),0xF2C48A,.35);const skyPulse=pulses(city,SK,10,0xF2994A,16);
 
 // 2b. 右上角小 101（內容頁）＋繞行的酷AI 泡泡
