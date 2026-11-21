@@ -1,0 +1,949 @@
+OpenAI Codex v0.171.0
+--------
+workdir: /Volumes/WD2T/Projects/ai-b3-1121
+model: gpt-6.1-terra
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: medium
+reasoning summaries: none
+session id: 01a1fbd1-0dcb-71a0-a42e-950f15d03569
+--------
+user
+# Codex 交辦：B3 試講簡報視覺美化（2026-11-21，今天下午要上台）
+
+## 背景
+- 這是 HTML 簡報（1920×1080 固定畫布、縮放顯示）。內容在 `src/content.py`，版型在 `src/build.py`，樣式與互動在 `src/template.html`；`python3.13 src/build.py` 產出 `docs/index.html`。
+- 講者：臺北市數位學習中心 周凡淇。主題：把《115 年中小學教師數位與 AI 教學指引》接到臺北教室與「酷AI」。
+- 已有 three.js（`docs/assets/vendor/three.min.js`）視覺層：封面／章節／結尾是臺北天際線＋臺北 101 線框＋往上飄的酷AI 對話泡泡；內容頁右上角是旋轉的小 101。
+
+## 要你做的：讓它更完美、漂亮（視覺與版面，不改文字內容）
+1. **整體風格**：維持現有藍（#1E3A6E／#3B82C4）＋酷AI 橘（#F0A23B）配色與 Noto Sans TC 黑體。⛔ 不要用楷體、手寫體、霞鶩文楷之類字體（講者不喜歡）。
+2. **three.js 提升質感**（最重要）：
+   - 封面的臺北 101 要更像 101：八節往上外擴的「花開富貴」造型更明顯、節與節之間加腰線，塔頂與塔尖比例正確；加柔和的漸層天空或光暈感（仍要能讓前景文字清楚）。
+   - 天際線加一點縱深（遠景淡、近景深），可加細緻的城市燈點或沿街道流動的光點。
+   - 酷AI 對話泡泡的動畫更順、有輕微縮放與漂浮；泡泡文字清楚。
+   - 內容頁右上角小 101 不要擋到標題或內容；必要時縮小、降低存在感。
+   - 必須保留：`prefers-reduced-motion` 時不動、WebGL 失敗時簡報照常顯示（現有的 try/catch 與 `if(!window.THREE)return`）。
+3. **版面細節**：
+   - 封面文字卡更精緻（現在是半透明白框）。
+   - `news` 新聞卡（`.news`）：媒體標籤、日期、標題、摘要的層次更清楚；卡片高度一致；頁面上半不要大片空白（卡片可垂直置中或放大字級）。
+   - `stats` 數字卡、`table`、`shotText`、`shot2`（三張圖時）排版平衡，圖片不要過小。
+   - 章節頁（divider）右側圖片加一點景深或傾斜卡片效果都可以。
+4. 移除不再使用的舊 CSS：`#zsbar`、`.zslock`、`.zsstat`、`.zs …` 相關規則（中山國中簡報殘留，本簡報沒用到）。
+
+## 不要做的
+- ⛔ **不要改 `src/content.py` 裡任何文字、數字、新聞、來源**（講稿與補充也不要動）。只能改 `src/template.html`、`src/build.py` 的 HTML 結構與 CSS／JS。
+- 不要新增外部 CDN 或網路資源；字體維持現有 Google Fonts 連結。
+- 不要刪除快捷鍵、補充／講稿側欄、計時器、總覽、圖片放大等功能。
+- 不要 git commit（Claude 會處理）。
+
+## 完成判準
+- `python3.13 src/build.py` 成功，印出 `slides 21`。
+- `git diff --stat src/content.py` 為空。
+- 你無法開瀏覽器的話，最後回報你改了哪些地方；瀏覽器截圖驗收由 Claude 做。
+
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+hook: UserPromptSubmit Completed
+codex
+我會先檢查現有版型、視覺程式與專案規則，再針對 101、城市動畫及指定卡片版面調整，最後重新建置並確認內容檔沒有變動。我會使用 modern-web-guidance 查核相關前端做法。
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'cat ~/.codex/coding-rules.md && cat /Users/nora/.codex/skills/modern-web-guidance/SKILL.md' in /Volumes/WD2T/Projects/ai-b3-1121
+ succeeded in 0ms:
+# 程式碼守則（跨機共用）
+
+> **正典**：GDrive `02Tools/claude-config/coding-rules.md`。各機由「同步 skill」複製到 `~/.claude/` 與 `~/.codex/`。
+> **改規則改正典**，不要改本機複本——下次同步會被蓋掉。
+> 來源：Karpathy 的 LLM coding pitfalls（`multica-ai/andrej-karpathy-skills`，MIT）。原文四條只收兩條，
+> 另兩條（先講假設、定義可驗證的成功條件）我已有更具體的實戰版，不重複佔 context：
+> memory `feedback_adjacent_method_ask_before_write`、`feedback_verification_needs_machine_checkable_output`、
+> `feedback_deploy_verify_over_http`、`feedback_verifier_false_positive_first`。
+
+## 1. 簡潔優先
+
+**用最少的程式碼解決問題，不做沒被要求的事。**
+
+- 不加沒要求的功能、設定項、「未來可能需要」的彈性
+- 只有一個使用處就不要抽象
+- 不為不可能發生的情況寫錯誤處理
+- 200 行能寫成 50 行，就重寫
+
+判準：「資深工程師會不會說這過度設計？」會，就簡化。
+
+## 2. 外科式修改
+
+**只動非動不可的地方；只清自己製造的殘骸。**
+
+- 不順手「改善」隔壁的程式碼、註解、格式
+- 不重構沒壞的東西；風格照現場的來，即使你有別的偏好
+- 看到不相關的死碼 → **回報，不要刪**
+- 只清掉「因為你的修改」而變成孤兒的 import／變數／函式
+
+判準：每一行改動都能直接追溯到使用者的要求。
+
+> 這就是 wiki「鎖定頁不主動覆寫、不優化措辭」在**程式碼領域**的同一條規則。
+> 刪任何東西前要讓人看見完整清單：memory `feedback_destructive_op_show_full_list`。
+
+## 適用範圍
+
+程式碼工作（ailms-web／tpform／PSM／regbot／presents／各式腳本）。
+瑣碎任務用判斷力——這兩條偏向謹慎而非速度，不要讓它變成拖累。
+---
+name: modern-web-guidance
+description: |
+  Search tool for modern web development best practices. MANDATORY: Execute FIRST for all HTML/CSS and clientside JS tasks. Do NOT skip — web APIs evolve rapidly and training weights contain obsolete patterns.
+  Trigger immediately for: modals/dialogs/popovers, tables, dark mode, anchor positioning, container queries, view transitions, scroll-driven animations, parallax/reveals, forms, validation, autofill, accessibility, custom selects, scrollbars, CWV (LCP, INP, CLS), content-visibility, fetch priority, image optimization, security, passkeys, HTML sanitization, web components, dates/timezones, built-in AI, WebAssembly, standard HTML/CSS/DOM in frameworks, etc.
+  DO NOT trigger for: backend (SQL, ORMs, API routes), infra/scripts (CI/CD, Docker, Actions, Python/Go, Git), or tooling/trivial (Vite, tsconfig, ESLint, tests, copy/renames, 3P docs), etc.
+---
+
+# Modern Web Guidance
+
+Search and retrieve standardized modern web best practices at the **start** of implementing or updating any web UI, CSS layout/animation, or client-side JS logic (dates/timezones, sanitization, performance, accessibility, UX fixes) before writing ad-hoc solutions or adding dependencies.
+
+## 本機安裝設定（2026-11-14）
+
+- 來源：`GoogleChrome/modern-web-guidance`，固定 commit `4dd968349e54ca45a05dd5c818fb035c9054b022`；CLI 固定 `1.0.0`。
+- 每次執行均使用 `DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.0`，停用預設遙測。這也適用於下方或 retrieved guides 內的指令；查詢只使用通用 UI／Web 技術詞，不帶學生資料、內部網址或密值。
+- 不自動改用 `@latest` 或更新 skill；升版時重查來源並保留遙測設定。此設定只作用於本工具的呼叫，不修改全域 shell 環境。
+
+## Primary Workflow
+
+### Step 1. Search Use Cases
+
+Run `modern-web-guidance` directly with `npx` using a **2–5 word action-oriented query** for a **single web platform capability or UI pattern**:
+- **Keep queries focused and generic**: Describe the user-visible capability (`<verb> + <UI/platform object>`, optionally paired with the target HTML/CSS/JS feature name if known). Omit framework/library names (`React`, `Vue`, `Tailwind`, etc.) and app/domain nouns (product, route, or component/file names). Split multi-feature tasks into separate `search` calls.
+- **Name implied UI primitives**: When the user's prompt expresses intent without naming the UI primitive (e.g. "confirm first", "delete with confirmation", "pick a date"), translate the domain intent into the implied UI component or platform mechanism (e.g. search `"confirmation modal dialog"` or `"confirm dialog"` rather than `"confirm destructive action"`, or `"date picker input"` rather than `"pick a date"`).
+- **Example**: Search `"light dismiss dialog"` or `"responsive data table"`, **not** `"dialog"` (too terse), `"responsive table dark mode"` (compound — split into two searches), or `"close React settings modal on outside click"` (framework/app noise).
+
+```sh
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.0 search "<query>" --skill-version 2026_11_09-5bcc021b
+```
+
+> **Note**: Returns `[{ "id", "description" }, ...]`. Judge results by their `description` fields:
+> - **Match found**: Call `retrieve` directly—do not also run `list`.
+> - **Weak or empty results**: If `search` returns `[]` or unrelated descriptions, **rephrase `search` once** using the concrete HTML/CSS/UI component noun or synonym (e.g., `dialog`, `modal`, `popover`, `table`, `form`) before falling back to `list` (or use `list` once for broad UI audits).
+> - **Topic not covered**: If no `description` matches after rephrasing, proceed without retrieving unrelated guides.
+
+### Step 2. Retrieve Best Practices
+
+Once you have relevant `id`(s) from the search results, call `retrieve` to get the full guide(s)—including both specific use-case guides that match your task and any broader discipline guide (e.g., `html`, `css`, `forms`, `accessibility`, `color`, `performance`, `security`) that applies. You can pass multiple IDs separated by commas.
+
+```sh
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.0 retrieve "<id>"
+```
+
+If `retrieve` saves large output (> 9.5 KB) to a temporary file to prevent truncation, read that file path in full using your file-reading tool (reading remaining line ranges if needed)—do not use `cat` or `head`.
+
+### Step 3. Verify Guidance Compliance
+
+When generating or modifying code, cross-check the implementation against the retrieved guide before concluding:
+- **Applicable Guidance & Fallbacks**: Ensure the relevant modern patterns and necessary fallback strategies from the guide are correctly applied, without forcing unrequested features.
+- **Task Fulfillment**: Confirm that the implementation fully satisfies the user's request.
+- Do not run `legacy-scan`; it's for detecting legacy patterns to modernize, not this.
+
+### Step 4. Disclose Skill Usage
+
+When you consult `modern-web-guidance` for a task, end the response where you deliver those changes with a `### Modern Web Guidance` section:
+- **When retrieved guides shaped your code**: Write **one** bullet (1–2 sentences, ≤75 words) per newly applied `<id>` in first-person voice explaining the non-obvious implementation choices, CSS/API overrides, or fallbacks `<id>` required and the pitfall it prevented, anchored by a short verbatim quote of that specific rule or gotcha (never the guide's intro overview):
+  `- **\`<id>\`**: <Non-obvious APIs, overrides, or fallbacks applied and the pitfall prevented> ("<short verbatim quote of the specific rule or gotcha>").`
+  - **Never** guess `<id>`s or quotes from memory after context compaction (re-run `search`/`retrieve` if needed), and credit **only** guide-backed changes from the current turn.
+- **When searched/listed in this turn but zero guides applied**: Write one first-person sentence naming which topics or guides you checked in `modern-web-guidance` and why none applied (omit if any guide applied).
+
+## Alternative flow: Modernize an existing codebase
+
+**Only** when asked for a broad, open-ended codebase modernization or legacy-pattern scan where no specific target feature or component is named (do **not** run `legacy-scan` when asked to add, update, fix, or audit a specific feature or component), run the 4-step modernization flow:
+
+> **Note**: `legacy-scan` scans for a curated subset (~20% of the guidance corpus).
+
+```sh
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.0 legacy-scan <path> --json
+```
+
+1. Scan: Run `legacy-scan <path> --json` to detect legacy web platform patterns across the project or directory.
+2. Verify: Check each finding against its `keepWhen` / `dropWhen` rubric; drop false positives (fallbacks, cross-file helpers, vendor code, lookalikes).
+3. Report: Summarize verified findings (and the modernization plan, if editing) for the user, noting that `legacy-scan` only checks the subset of guides (~20% of the catalog) that have deterministic legacy rules.
+4. Modernize (when the user asked to modernize rather than only audit/report): Retrieve each finding's guide (`retrieve "<guide-id>"` via Step 2), apply the replacement (keeping existing libraries as fallbacks where the guide requires one), and re-run `legacy-scan <path>` on the modified files to confirm resolution.
+   - Dropped findings and kept fallbacks still match static scans; do not edit safe code or inspect `legacy-scan.mjs` to force 0 findings.
+
+## Using npx / pnpx
+
+- **Runner & Permissions**: 本機使用上述固定版本及停用遙測的 `npx` 指令。若改用 `pnpx` 或 Windows 的 `npx.cmd`，仍須保留 `DISABLE_TELEMETRY=1` 與 `modern-web-guidance@1.0.0`。僅在執行環境要求核准時，才核准本工具的固定版本，不放行通用 `npx *` 或 `pnpx *`。
+- **Sandboxes & Network**: Fetching `modern-web-guidance` requires outbound network access. In sandboxed or approval-gated environments (e.g., Codex, Claude Code), **proactively request approval/allowlisting with network access BEFORE the first execution** to avoid timeouts, and set `NPM_CONFIG_CACHE=/tmp/npm-cache` if `~/.npm` is read-only.
+- **Offline**: If the command hangs due to being offline, retry with `DISABLE_TELEMETRY=1 npx --offline -y modern-web-guidance@1.0.0 …`.
+
+## Guidelines
+
+- Always search **first** to find the most relevant guides. Do not hallucinate guides or ignore them; they represent the preferred local standard for the user's project.
+- These guides use vanilla HTML/CSS/JS; adapt them to your framework without dropping the modern feature:
+  - **Types**: Spread/cast newly shipped HTML attributes (`{...({ popover: 'hint', interestfor: id, commandfor: id, switch: '' } as any)}`, `[attr.*]`) rather than removing them or merging `@types/react`.
+  - **SSR & Bundlers**: Guard `window`/`HTMLElement` in SSR and load polyfills via bare `import('<pkg>')` in client effects (or set Vite `build.target: 'esnext'` for top-level `await`)—never copy files from `node_modules`.
+  - **DOM, IDs & CSS**: Call `showModal()`/`moveBefore()` via refs on non-VDOM-managed nodes, generate per-instance IDs/`anchor-name`s (`useId()`), and keep `:root` and `@starting-style` top-level/unscoped.
+
+## Interpreting Browser Support & Fallbacks
+
+* **Default Behavior**: All guides assume **Baseline Widely available** features are safe to use without fallbacks. For features that are not Baseline widely available, you **MUST** follow the fallback recommendations in the guide, unless the user has specified a custom browser support policy.
+* **Custom Policies**: If the user defines explicit browser support requirements, use the guide's compatibility data to determine if a fallback can be ignored (for `Baseline YYYY` targets, a feature satisfies the target if its "Baseline since" date is `<= YYYY`). Examples: _"Do not implement feature fallbacks"_, _"Safari 17.4+"_, _"Never implement polyfills; use a lightweight custom fallback or redesign"_, or _"Allow Newly Available features if feature-detected with graceful degradation"_.
+* **Reactive Policy Discovery**: Suggest documenting a policy in `AGENTS.md` or `CLAUDE.md` (e.g., `**Browser Support:** Allow Newly Available features, but only adopt custom fallback code that adds <= 20 lines and no external dependencies`) if the developer targets a restricted runtime (Electron/Tauri), excludes specific browsers, hesitates over polyfill size/complexity, or asks if a feature is safe without fallbacks.
+
+hook: PostToolUse
+exec
+/bin/zsh -lc "rg -n 'ai-b3-1121|B3 試講' /Users/nora/.codex/memories/MEMORY.md" in /Volumes/WD2T/Projects/ai-b3-1121
+ exited 1 in 0ms:
+hook: PostToolUse
+exec
+/bin/zsh -lc "git status --short && rg --files -g 'AGENTS.md' -g 'src/*' -g 'package.json' && rg -n 'zsbar|zslock|zsstat|\\.zs|news|stats|shotText|shot2|THREE|reduced-motion|divider' src/template.html src/build.py" in /Volumes/WD2T/Projects/ai-b3-1121
+ succeeded in 0ms:
+?? .codex_last.txt
+?? .codex_run.log
+?? CODEX_TASK.md
+src/template.html
+src/content.py
+src/build.py
+src/build.py:70:    if t == "divider":
+src/build.py:71:        return f'''<div class="divider"><div class="dv-text"><div class="kicker big">{e(d["kicker"])}</div>
+src/build.py:81:    if t == "news":
+src/build.py:82:        cs = "".join(f'<a class="news" href="{html.escape(n["url"])}" target="_blank" rel="noopener"><div class="nw-k"><b>{e(n["outlet"])}</b><span>{e(n["date"])}</span></div><h3>{e(n["head"])}</h3><p>{e(n["line"])}</p><span class="nw-go">看原文 ↗</span></a>' for n in d["items"])
+src/build.py:83:        return f'{head(d)}<div class="newsgrid n{len(d["items"])}">{cs}</div>{foot(d)}'
+src/build.py:84:    if t == "newsimg":
+src/build.py:87:    if t == "shot2":
+src/build.py:97:    if t == "shotText":
+src/build.py:131:    if t == "stats":
+src/build.py:132:        cs = "".join(f'<div class="card stat"><div class="big">{e(n)}</div><h3>{e(l)}</h3>{f"<p>{e(s)}</p>" if s else ""}</div>' for n, l, s in d["stats"])
+src/build.py:133:        return f'{head(d)}<div class="cards c{len(d["stats"])}">{cs}</div>{foot(d)}'
+src/template.html:23:.slide:not(.t-cover):not(.t-closing):not(.t-divider)::after{content:"";position:absolute;right:60px;top:36px;width:360px;height:160px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='160'><path d='M10 140 C 90 150 120 60 200 90 S 280 40 300 40' fill='none' stroke='%235AA9E6' stroke-width='3' stroke-dasharray='8 9'/><path d='M300 40 l52 -24 -18 50 -12 -16 z' fill='white' stroke='%231E3A6E' stroke-width='3' stroke-linejoin='round'/></svg>") no-repeat;opacity:.7;pointer-events:none}
+src/template.html:26:.three .slide:not(.t-cover):not(.t-closing):not(.t-divider)::after{display:none}
+src/template.html:27:@media (prefers-reduced-motion:no-preference){.slide.on .inner{animation:slidein .4s cubic-bezier(.2,.7,.2,1)}}
+src/template.html:31:.zs .slide::before{height:6px;background:linear-gradient(#18409a 0 4px,#d7191c 4px)}
+src/template.html:32:.zs .slide:not(.t-cover):not(.t-closing) .pno{display:none}
+src/template.html:34:.zslock{position:absolute;left:48px;top:30px;display:flex;align-items:center;gap:10px;font:900 20px "Noto Sans TC",sans-serif;color:#18409a;z-index:2}
+src/template.html:35:.zslock img{height:42px}.zslock i{font-style:normal;color:#56637d;font-weight:500}
+src/template.html:36:.zslock .chip{display:flex;align-items:center;background:linear-gradient(90deg,#17b3b5,#6fd4c6);border-radius:10px;padding:7px 12px}.zslock .chip img{height:20px}
+src/template.html:37:.zsstat{display:inline-flex;align-items:center;gap:12px;margin-top:26px;font:500 26px "Noto Sans TC",sans-serif;color:#13203a;background:#fff;border:2px solid #d9e1ee;border-radius:999px;padding:8px 26px}
+src/template.html:38:.zsstat::before{content:"";width:14px;height:14px;border-radius:50%;background:#1f9d55;box-shadow:0 0 0 5px rgba(31,157,85,.18)}
+src/template.html:39:@media (prefers-reduced-motion:no-preference){.zsstat::before{animation:zsp 1.8s ease-in-out infinite}}
+src/template.html:41:#zsbar{position:absolute;left:36px;right:28px;bottom:10px;height:34px;display:flex;align-items:center;gap:12px;font:700 18px "Noto Sans TC",sans-serif;color:#18409a;pointer-events:none}
+src/template.html:42:#zsbar img{height:32px}
+src/template.html:43:#zsbar .lg{display:flex;align-items:center;gap:6px;font-size:15px;color:#56637d;margin-left:14px}
+src/template.html:44:#zsbar .lg i{width:22px;height:4px;border-radius:2px;background:#18409a}#zsbar .lg i.b{background:#76b900;margin-left:10px}
+src/template.html:45:#zsbar canvas{flex:1;height:34px;min-width:0}
+src/template.html:46:#zsbar svg{width:118px;height:74px;align-self:flex-end;margin-bottom:-4px}
+src/template.html:47:#zsbar .trk{fill:none;stroke:#d3dcec;stroke-width:12;stroke-linecap:round}
+src/template.html:48:#zsbar .val{fill:none;stroke:#18409a;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+src/template.html:49:#zsbar .num{font-size:30px;font-weight:800;fill:#13203a}#zsbar .unit{font-size:13px;fill:#56637d;font-weight:500}
+src/template.html:50:@media print{#zsbar{display:none}}
+src/template.html:75:.divider{display:flex;align-items:center;height:100%;gap:60px}
+src/template.html:151:.newsgrid{flex:1;display:grid;gap:40px;align-content:center;min-height:0}
+src/template.html:152:.newsgrid.n2{grid-template-columns:1fr 1fr}.newsgrid.n1{grid-template-columns:1fr}.newsgrid.n3{grid-template-columns:repeat(3,1fr)}
+src/template.html:153:.news{position:relative;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--navy);border-radius:22px;padding:30px 36px 64px;box-shadow:12px 14px 0 var(--pale);overflow:hidden}
+src/template.html:154:.news::before{content:"NEWS";position:absolute;right:-10px;top:-18px;font:900 120px "Noto Sans TC";color:#F1F6FC;z-index:0}
+src/template.html:155:.news>*{position:relative}
+src/template.html:158:.news h3{margin:18px 0 14px;font:900 50px/1.3 "Noto Sans TC";color:var(--navy)}
+src/template.html:159:.news p{margin:0;font-size:34px;line-height:1.5}
+src/template.html:351:(function(){if(!window.THREE)return;
+src/template.html:354:let R;try{R=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true});}catch(e){return;}
+src/template.html:357:const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(42,1920/1080,1,3000);cam.position.z=900;
+src/template.html:360:x.beginPath();x.arc(32,32,26,0,7);x.fillStyle='#fff';x.fill();const tex=new THREE.CanvasTexture(c);
+src/template.html:361:const V=(a,b,c)=>new THREE.Vector3(a,b,c);
+src/template.html:363:function layer(){const g=new THREE.Group();g.mats=[];scene.add(g);
+src/template.html:365:  g.lines=(arr,color,o)=>{const b=new THREE.BufferGeometry().setFromPoints(arr);const l=new THREE.LineSegments(b,g.mat(new THREE.LineBasicMaterial({color}),o));g.add(l);return l;};
+src/template.html:366:  g.dots=(arr,color,size,o)=>{const b=new THREE.BufferGeometry().setFromPoints(arr);const m=new THREE.Points(b,g.mat(new THREE.PointsMaterial({color,size,map:tex,alphaTest:.05}),o));g.add(m);return m;};
+src/template.html:382:  const face=g.mat(new THREE.MeshBasicMaterial({color:0xEAF3FC}),1),face2=g.mat(new THREE.MeshBasicMaterial({color:0xD3E2F4}),1),
+src/template.html:383:        edge=g.mat(new THREE.LineBasicMaterial({color:edgeCol}),1);
+src/template.html:384:  const tw=new THREE.Group();g.add(tw);let y=0;
+src/template.html:385:  const put=(geo,h,m)=>{const me=new THREE.Mesh(geo,m||face);me.position.y=y+h/2;me.rotation.y=Math.PI/4;tw.add(me);
+src/template.html:386:    const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),edge);l.position.copy(me.position);l.rotation.copy(me.rotation);tw.add(l);y+=h;};
+src/template.html:387:  put(new THREE.CylinderGeometry(46*s,54*s,40*s,4),40*s,face2);                 // 裙樓
+src/template.html:388:  put(new THREE.CylinderGeometry(30*s,38*s,70*s,4),70*s);                       // 基座（往上收）
+src/template.html:389:  for(let i=0;i<8;i++)put(new THREE.CylinderGeometry(34*s,26*s,38*s,4),38*s,i%2?face:face2); // 八節「花開富貴」往上外擴
+src/template.html:390:  put(new THREE.CylinderGeometry(16*s,22*s,26*s,4),26*s,face2);
+src/template.html:391:  put(new THREE.CylinderGeometry(10*s,13*s,20*s,4),20*s);
+src/template.html:392:  put(new THREE.CylinderGeometry(1.5*s,3*s,70*s,6),70*s);                       // 塔尖
+src/template.html:397:  x.fillStyle='#fff';x.font='900 52px "Noto Sans TC",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,128,64);return new THREE.CanvasTexture(c);}
+src/template.html:403:const bx=[],bedge=city.mat(new THREE.LineBasicMaterial({color:0x6FA8DC}),.9),bface=city.mat(new THREE.MeshBasicMaterial({color:0xF3F8FE}),1);
+src/template.html:405:  const geo=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(geo,bface);m.position.set(x,h/2,-160-rnd()*260);city.add(m);
+src/template.html:406:  const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),bedge);l.position.copy(m.position);city.add(l);bx.push(m.position.clone().add(V(0,h/2,0)));}
+src/template.html:407:const bubs=Array.from({length:9},(_,i)=>{const sp=new THREE.Sprite(city.mat(new THREE.SpriteMaterial({map:BUB[i%BUB.length]}),.95));
+src/template.html:417:const hb=new THREE.Sprite(hub.mat(new THREE.SpriteMaterial({map:BUB[0]}),1));hb.scale.set(54,34,1);hub.add(hb);
+src/template.html:419:const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+src/template.html:423:  if(on!==host){host=on;if(!on)return;if(on.classList.contains("t-cover"))on.appendChild(cv);else on.insertBefore(cv,on.firstChild);full=/t-(cover|divider|closing)/.test(on.className);
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "cat src/build.py && sed -n '1,190p' src/template.html && sed -n '345,455p' src/template.html" in /Volumes/WD2T/Projects/ai-b3-1121
+ succeeded in 0ms:
+# 產生 docs/index.html：content.py（版面與講稿）＋ supplements.json（補充資料）
+import html, json, os, re, sys
+sys.path.insert(0, os.path.dirname(__file__))
+from content import S, SHOT, ILL
+
+BASE = os.path.dirname(__file__)
+sup_path = os.path.join(BASE, "supplements.json")
+SUP = json.load(open(sup_path)) if os.path.exists(sup_path) else {}
+ILL_EXT = {}
+for f in os.listdir(os.path.join(BASE, "..", "docs", ILL)) if os.path.isdir(os.path.join(BASE, "..", "docs", ILL)) else []:
+    ILL_EXT[os.path.splitext(f)[0]] = f
+
+
+def e(s):
+    # 跳脫後支援 **粗體** 與換行
+    s = html.escape(s or "")
+    s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
+    return s.replace("\n", "<br>")
+
+
+def ill(name):
+    f = ILL_EXT.get(name)
+    return f'<img class="ill" src="{ILL}{f}" alt="">' if f else f'<div class="ill missing">插圖 {name} 製作中</div>'
+
+
+def dv_img(d):
+    # 章節頁右側：有 img 用實機截圖，否則用插圖
+    if d.get("img"):
+        return f'<img class="ill" style="height:auto;border-radius:24px;box-shadow:0 12px 40px rgba(30,58,110,.18)" src="{SHOT}{d["img"]}" alt="">'
+    return ill(d["ill"])
+
+
+def head(d):
+    k = f'<div class="kicker">{e(d["kicker"])}</div>' if d.get("kicker") else ""
+    cls = "title sr" if d.get("hide_title") else "title"
+    t = f'<h2 class="{cls}"><span>{e(d["title"])}</span></h2>' if d.get("title") else ""
+    return k + t
+
+
+def foot(d):
+    out = ""
+    if d.get("rel"):
+        out += f'<div class="rel"><span class="tag">{e(d["rel"][0])}</span><span>{e(d["rel"][1])}</span></div>'
+    if d.get("foot"):
+        out += f'<p class="foot">{e(d["foot"])}</p>'
+    if d.get("link"):
+        out += f'<a class="link" href="{html.escape(d["link"])}" target="_blank" rel="noopener">{html.escape(d["link"])}</a>'
+    if d.get("dls"):
+        out += '<div class="dls">' + "".join(f'<a class="dl big" href="{html.escape(h)}" download>⬇ {e(l)}</a>' for h, l in d["dls"]) + "</div>"
+    if d.get("src"):
+        out += f'<p class="src">資料來源｜{e(d["src"])}</p>'
+    return out
+
+
+def render(d):
+    t = d["t"]
+    if t == "cover":
+        return f'''<div class="cover"><div class="cover-text">
+<div class="org">B3 數位教學指引儲備講師培訓工作坊｜試講</div>
+<h1>把指引帶進<br><mark>臺北教室</mark></h1>
+<div class="hand">少講理論，多看新聞與工具</div>
+<div class="meta">2026.11.21（六）　國立臺中教育大學</div>
+<div class="who"><span>臺北市數位學習中心 <b>周凡淇</b></span></div>
+</div></div>'''
+    if t == "closing":
+        return f'''<div class="cover"><div class="cover-text">
+<h1><mark>謝謝大家！</mark></h1><div class="hand">講指引，就用老師看得到的例子</div>
+<div class="meta">臺北的教育型 AI：酷AI（酷課雲）</div>
+<div class="who"><span>周凡淇｜臺北市數位學習中心｜nora@hhups.tp.edu.tw</span></div></div></div>'''
+    if t == "divider":
+        return f'''<div class="divider"><div class="dv-text"><div class="kicker big">{e(d["kicker"])}</div>
+<h2 class="dv-title">{e(d["title"])}</h2><div class="dv-sub">{e(d["sub"])}</div></div>
+<div class="dv-ill">{dv_img(d)}</div></div>'''
+    if t == "bullets":
+        tag = "ol" if d.get("numbered") else "ul"
+        lis = "".join(f'<li class="{"hl" if i in d.get("hl", []) else ""}">{e(x)}</li>' for i, x in enumerate(d["items"]))
+        return f'{head(d)}<{tag} class="bul">{lis}</{tag}>{foot(d)}'
+    if t == "shot":
+        cls = "shot wide" if d.get("wide") else "shot"
+        return f'{head(d)}<div class="{cls}"><img src="{SHOT}{d["img"]}" alt=""></div>{foot(d)}'
+    if t == "news":
+        cs = "".join(f'<a class="news" href="{html.escape(n["url"])}" target="_blank" rel="noopener"><div class="nw-k"><b>{e(n["outlet"])}</b><span>{e(n["date"])}</span></div><h3>{e(n["head"])}</h3><p>{e(n["line"])}</p><span class="nw-go">看原文 ↗</span></a>' for n in d["items"])
+        return f'{head(d)}<div class="newsgrid n{len(d["items"])}">{cs}</div>{foot(d)}'
+    if t == "newsimg":
+        lis = "".join(f'<li><b>{e(h)}</b><span>{e(b)}</span></li>' for h, b in d["items"])
+        return f'{head(d)}<div class="ni"><div class="ni-img"><img src="{SHOT}{d["img"]}" alt=""></div><ol class="ni-steps">{lis}</ol></div>{foot(d)}'
+    if t == "shot2":
+        imgs = "".join(f'<img src="{SHOT}{i}" alt="">' for i in d["imgs"])
+        cls = "three" if len(d["imgs"]) == 3 else "two"
+        return f'{head(d)}<div class="shot {cls}">{imgs}</div>{foot(d)}'
+    if t == "qrpage":
+        lis = "".join(f"<li>{e(x)}</li>" for x in d["lines"])
+        return f'{head(d)}<div class="qrpage"><img src="{SHOT}{d["img"]}" alt="LINE 群組 QR Code"><ul class="bul">{lis}</ul></div>{foot(d)}'
+    if t == "compare":
+        figs = "".join(f'<figure><img src="{SHOT}{i}" alt=""><figcaption>{e(c)}</figcaption></figure>' for i, c in d["imgs"])
+        return f'{head(d)}<div class="shot two">{figs}</div>{foot(d)}'
+    if t == "shotText":
+        ps = "".join(f"<p>{e(x)}</p>" for x in d["text"])
+        return f'{head(d)}<div class="st{' small' if d.get('small') else ''}"><div class="st-img"><img src="{SHOT}{d["img"]}" alt=""></div><div class="st-text">{ps}</div></div>{foot(d)}'
+    if t == "video":
+        if d.get("yt"):
+            return f'{head(d)}<div class="shot video"><iframe src="https://www.youtube.com/embed/{d["yt"]}" title="{e(d["title"])}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>{foot(d)}'
+        return f'{head(d)}<div class="vid"><video controls preload="metadata" playsinline poster="assets/video/{d["poster"]}" src="assets/video/{d["src_file"]}"></video></div>{foot(d)}'
+    if t == "illus":
+        return f'{head(d)}<div class="illus">{ill(d["ill"])}</div>{foot(d)}'
+    if t == "cards":
+        cs = "".join(f'<div class="card"><h3>{e(h)}</h3><p>{e(b)}</p>{f"<div class=note>{e(n)}</div>" if n else ""}</div>' for h, b, n in d["cards"])
+        return f'{head(d)}<div class="cards c{d["cols"]}">{cs}</div>{foot(d)}'
+    if t == "redesign":
+        cs = "".join(f'<div class="card rd{i}"><h3>{e(h)}</h3><p>{e(b)}</p>{f"<div class=note>{e(n)}</div>" if n else ""}</div>'
+                     for i, (h, b, n) in enumerate(d["cols"]))
+        return f'{head(d)}<div class="cards c3 arrows">{cs}</div>{foot(d)}'
+    if t == "flow":
+        cs = "".join(f'<div class="card"><div class="num">{i + 1}</div><h3>{e(h)}</h3><p>{e(b)}</p></div>' for i, (h, b) in enumerate(d["steps"]))
+        return f'{head(d)}<div class="cards c4 arrows">{cs}</div>{foot(d)}'
+    if t == "steps":
+        cs = "".join(f'<li><span class="num">{i + 1}</span><span>{e(x)}</span></li>' for i, x in enumerate(d["steps"]))
+        cls = "steps compact" if d.get("compact") else "steps"
+        return f'{head(d)}<ol class="{cls}">{cs}</ol>{foot(d)}'
+    if t == "case":
+        mark = "ABC" if d.get("letters") else "123"
+        qs = "".join(f'<li><span class="num">{"" if d.get("letters") else mark[i]}</span><span>{e(q)}</span></li>' for i, q in enumerate(d["qs"]))
+        ask = f'<p class="foot">{e(d["ask"])}</p>' if d.get("ask") else ""
+        return f'''<div class="kicker">{e(d["kicker"])}</div><div class="situation"><span class="tag">情境</span>{e(d["situation"])}</div>
+<ol class="steps qs">{qs}</ol>{ask}{foot(d)}'''
+    if t == "table":
+        th = "".join(f"<th>{e(x)}</th>" for x in d["head"])
+        trs = "".join("<tr>" + "".join(f"<td>{e(c)}</td>" for c in r) + "</tr>" for r in d["rows"])
+        cls = "tbl compact" if d.get("compact") else "tbl"
+        return f'{head(d)}<table class="{cls}"><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table>{foot(d)}'
+    if t == "stats":
+        cs = "".join(f'<div class="card stat"><div class="big">{e(n)}</div><h3>{e(l)}</h3>{f"<p>{e(s)}</p>" if s else ""}</div>' for n, l, s in d["stats"])
+        return f'{head(d)}<div class="cards c{len(d["stats"])}">{cs}</div>{foot(d)}'
+    if t == "quote":
+        return f'{head(d)}<blockquote class="quote">{e(d["text"])}</blockquote>{foot(d)}'
+    if t == "check":
+        cs = "".join(f'<div class="card"><h3>{e(h)}</h3><p>{e(b)}</p></div>' for h, b in d["cols"])
+        return f'<div class="kicker">{e(d["kicker"])}</div><blockquote class="quote q2">{e(d["q"])}</blockquote><div class="cards c2">{cs}</div>'
+    if t == "aiday":
+        lis = "".join(f"<li>{e(x)}</li>" for x in d["lines"])
+        qr = f'<img class="qr" src="{SHOT}{d["qr"]}" alt="QR code">' if d.get("qr") else ""
+        return f'''<div class="kicker">案例激盪｜從 AI Day 看到什麼？</div><h2 class="title"><span>{e(d["title"])}</span></h2>
+<div class="aiday"><ul class="bul">{lis}</ul>{qr}</div>{foot(d)}'''
+    if t == "prompt":
+        size = " small" if d.get("small") else (" mid" if d.get("mid") else (" big" if len(d["text"]) <= 220 else ""))
+        return f'{head(d)}<div class="prompt code{size}"><button class="copy">複製</button><pre>{html.escape(d["text"])}</pre></div>{foot(d)}'
+    if t == "sources":
+        cols = "".join("<ul>" + "".join(f"<li>{e(x)}</li>" for x in c) + "</ul>" for c in d["cols"])
+        return f'<div class="kicker">來源</div><h2 class="title"><span>{e(d["title"])}</span></h2><div class="srcs">{cols}</div>'
+    raise ValueError(t)
+
+
+def sup_html(n):
+    items = SUP.get(str(n), []) + CUR_SUP
+    out = []
+    for it in items:
+        pts = "".join(f"<li>{e(p)}</li>" for p in it.get("points", []))
+        cl = "".join(f"<li>{e(p)}</li>" for p in it.get("classroom", []))
+        cl = f'<div class="cl"><b>課堂可以這樣做</b><ol>{cl}</ol></div>' if cl else ""
+        rd = "".join(f"<p>{e(x)}</p>" for x in it.get("read", []))
+        rd = f'<details class="rd" open><summary>深入閱讀</summary>{rd}</details>' if rd else ""
+        lm = "".join(f"<li>{e(x)}</li>" for x in it.get("limits", []))
+        lm = f'<div class="lm"><b>研究限制・引用提醒</b><ul>{lm}</ul></div>' if lm else ""
+        tk = f'<div class="tk"><b>上台可以這樣說</b><p>{e(it["talk"])}</p></div>' if it.get("talk") else ""
+        url = f' <a href="{html.escape(it["url"])}" target="_blank" rel="noopener">原文</a>' if it.get("url") else ""
+        ev = it.get("evidence", "")
+        code = ""
+        if it.get("code"):
+            code = f'<div class="code"><button class="copy">複製</button><pre>{html.escape(it["code"])}</pre></div>'
+        if it.get("download"):
+            code += f'<p><a class="dl" href="{html.escape(it["download"])}" download>⬇ {e(it.get("download_label","下載"))}</a></p>'
+        out.append(f'''<article class="sup"><div class="sup-k"><span class="kind">{e(it.get("kind",""))}</span><span class="ev ev-{html.escape(ev)}">{e(ev)}</span></div>
+<h4>{e(it["title"])}</h4><ul>{pts}</ul>{rd}{lm}{tk}{cl}{code}<p class="sup-src">{e(it.get("source",""))}{url}</p></article>''')
+    return "".join(out), len(items)
+
+
+CUR_SUP = []
+slides, side = [], []
+main, spare = 0, 0
+for d in S:
+    # 主體頁編 1、2、3…；備用段（spare=True）編「備1、備2…」
+    if d.get("spare"):
+        spare += 1; label = f"備{spare}"
+    else:
+        main += 1; label = str(main)
+    note = d.get("notes", "")
+    body = render(d)
+    CUR_SUP = d.get("sup", [])
+    sh, cnt = sup_html(label)
+    badge = f'<button class="supbtn" title="補充資料（S）">📎 補充（{cnt} 則）</button>' if cnt else ""
+    slides.append(f'<section class="slide t-{d["t"]}" id="p{label}" data-label="{label}"><div class="inner">{body}</div>{badge}<div class="pno">{label}</div></section>')
+    side.append({"n": label, "notes": note, "sup": sh})
+
+tpl = open(os.path.join(BASE, "template.html")).read()
+out = tpl.replace("<!--SLIDES-->", "\n".join(slides)).replace("/*SIDE*/[]", json.dumps(side, ensure_ascii=False))
+open(os.path.join(BASE, "..", "docs", "index.html"), "w").write(out)
+print("slides", len(slides), "with supplements", sum(1 for s in side if s["sup"]))
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>把指引帶進臺北教室</title>
+<meta name="description" content="2026-11-21 B3 數位教學指引儲備講師培訓工作坊試講：把《115 年中小學教師數位與 AI 教學指引》三個模組接到臺北教室與酷AI，用真實新聞看七大風險。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1E3A6E; --ink:#22314d; --blue:#3B82C4; --sky:#5AA9E6; --pale:#DCEEFB; --paper:#FBFDFF;
+  --orange:#F0A23B; --soft:#F3F7FB; --line:#C9D9EA; --muted:#5d6b80;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#E9EFF6;color:var(--ink);font-family:"Noto Sans TC",system-ui,sans-serif}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#deck{width:1920px;height:1080px;position:relative;transform-origin:center center;flex:none}
+.slide{position:absolute;inset:0;background:var(--paper);display:none;overflow:hidden;
+  background-image:radial-gradient(circle at 1px 1px,#e3ecf6 1px,transparent 0);background-size:28px 28px}
+.slide.on{display:block}
+.slide:not(.t-cover):not(.t-closing):not(.t-divider)::after{content:"";position:absolute;right:60px;top:36px;width:360px;height:160px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='160'><path d='M10 140 C 90 150 120 60 200 90 S 280 40 300 40' fill='none' stroke='%235AA9E6' stroke-width='3' stroke-dasharray='8 9'/><path d='M300 40 l52 -24 -18 50 -12 -16 z' fill='white' stroke='%231E3A6E' stroke-width='3' stroke-linejoin='round'/></svg>") no-repeat;opacity:.7;pointer-events:none}
+.slide::before{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:linear-gradient(90deg,var(--sky),var(--pale) 60%,var(--orange))}
+.inner{position:absolute;inset:70px 120px 70px 120px;display:flex;flex-direction:column}
+.three .slide:not(.t-cover):not(.t-closing):not(.t-divider)::after{display:none}
+@media (prefers-reduced-motion:no-preference){.slide.on .inner{animation:slidein .4s cubic-bezier(.2,.7,.2,1)}}
+/* ── 取自中山平台界面：膠囊標籤、藍紅雙線、底部狀態列（校徽、GPU 即時曲線、儀表式頁碼） */
+.slide .kicker{align-self:flex-start;width:fit-content;font-size:24px;color:#fff;background:#18409a;border-radius:999px;padding:5px 22px 6px;margin-bottom:12px;letter-spacing:.08em}
+.slide .kicker::before{content:"";display:inline-block;width:12px;height:12px;border-radius:50%;background:#f2a516;margin-right:12px;vertical-align:2px}
+.zs .slide::before{height:6px;background:linear-gradient(#18409a 0 4px,#d7191c 4px)}
+.zs .slide:not(.t-cover):not(.t-closing) .pno{display:none}
+.slide .kicker.big{font-size:32px;padding:8px 30px 9px;margin-bottom:22px}
+.zslock{position:absolute;left:48px;top:30px;display:flex;align-items:center;gap:10px;font:900 20px "Noto Sans TC",sans-serif;color:#18409a;z-index:2}
+.zslock img{height:42px}.zslock i{font-style:normal;color:#56637d;font-weight:500}
+.zslock .chip{display:flex;align-items:center;background:linear-gradient(90deg,#17b3b5,#6fd4c6);border-radius:10px;padding:7px 12px}.zslock .chip img{height:20px}
+.zsstat{display:inline-flex;align-items:center;gap:12px;margin-top:26px;font:500 26px "Noto Sans TC",sans-serif;color:#13203a;background:#fff;border:2px solid #d9e1ee;border-radius:999px;padding:8px 26px}
+.zsstat::before{content:"";width:14px;height:14px;border-radius:50%;background:#1f9d55;box-shadow:0 0 0 5px rgba(31,157,85,.18)}
+@media (prefers-reduced-motion:no-preference){.zsstat::before{animation:zsp 1.8s ease-in-out infinite}}
+@keyframes zsp{50%{box-shadow:0 0 0 10px rgba(31,157,85,0)}}
+#zsbar{position:absolute;left:36px;right:28px;bottom:10px;height:34px;display:flex;align-items:center;gap:12px;font:700 18px "Noto Sans TC",sans-serif;color:#18409a;pointer-events:none}
+#zsbar img{height:32px}
+#zsbar .lg{display:flex;align-items:center;gap:6px;font-size:15px;color:#56637d;margin-left:14px}
+#zsbar .lg i{width:22px;height:4px;border-radius:2px;background:#18409a}#zsbar .lg i.b{background:#76b900;margin-left:10px}
+#zsbar canvas{flex:1;height:34px;min-width:0}
+#zsbar svg{width:118px;height:74px;align-self:flex-end;margin-bottom:-4px}
+#zsbar .trk{fill:none;stroke:#d3dcec;stroke-width:12;stroke-linecap:round}
+#zsbar .val{fill:none;stroke:#18409a;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+#zsbar .num{font-size:30px;font-weight:800;fill:#13203a}#zsbar .unit{font-size:13px;fill:#56637d;font-weight:500}
+@media print{#zsbar{display:none}}
+@keyframes slidein{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.pno{position:absolute;right:40px;bottom:30px;font:600 30px Caveat,cursive;color:var(--blue)}
+.kicker{font:700 30px "Noto Sans TC",sans-serif;color:var(--blue);letter-spacing:.06em;margin-bottom:6px}
+.kicker::before{content:"✎ ";color:var(--orange)}
+.kicker.big{font-size:44px}
+.title{margin:0 0 40px;font-weight:900;font-size:76px;color:var(--navy);line-height:1.15}
+.title span{background:linear-gradient(transparent 62%,var(--pale) 62%);padding:0 10px;
+  border-bottom:6px solid var(--orange);border-radius:0 0 40px 6px/0 0 10px 4px}
+.foot{font-size:38px;font-weight:700;color:var(--navy);margin:28px 0 0;padding:14px 24px;background:#FFF6E6;border-left:10px solid var(--orange);border-radius:6px}
+.src{position:absolute;left:0;bottom:-34px;margin:0;font-size:22px;color:var(--muted)}
+.link{font-size:32px;color:var(--blue);margin-top:20px;font-weight:700}
+mark{background:linear-gradient(transparent 55%,var(--pale) 55%);color:inherit}
+/* 封面 */
+.cover{position:absolute;inset:-70px -120px;display:flex;align-items:center;justify-content:center}
+.cover .ill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cover-text{position:relative;text-align:center;background:rgba(251,253,255,.82);padding:40px 70px;border-radius:40px;box-shadow:0 0 60px 30px rgba(251,253,255,.85)}
+.cover .org{font:700 34px "Noto Sans TC",sans-serif;color:var(--blue)}
+.cover h1{font-weight:900;font-size:112px;line-height:1.15;color:var(--navy);margin:18px 0}
+.cover h1 mark{border-bottom:8px solid var(--orange)}
+.cover .meta{font-size:40px;font-weight:700;color:var(--ink)}
+.cover .who{margin-top:26px;display:flex;gap:40px;justify-content:center;font-size:36px}
+.cover .who b{font:700 46px "Noto Sans TC",sans-serif;color:#B5462E}
+.cover .hand{font:700 64px "Noto Sans TC",sans-serif;letter-spacing:.08em;color:var(--blue)}
+/* 章節頁 */
+.divider{display:flex;align-items:center;height:100%;gap:60px}
+.dv-text{flex:1}
+.dv-title{font-weight:900;font-size:130px;color:var(--navy);margin:10px 0;line-height:1.1}
+.dv-sub{font:700 60px "Noto Sans TC",sans-serif;color:var(--ink);border-bottom:8px solid var(--orange);display:inline-block;padding-bottom:6px}
+.dv-ill{width:760px;height:760px;flex:none;display:flex;align-items:center}
+.dv-ill .ill{width:100%;height:100%;object-fit:contain}
+/* 條列 */
+.bul{margin:auto 0;padding-left:1.2em;font-size:50px;line-height:1.55}
+.bul li{margin:8px 0}
+.bul li::marker{color:var(--orange)}
+.bul li.hl{font-weight:700;color:var(--navy)}
+ol.bul li::marker{font-weight:900;color:var(--blue)}
+/* 卡片：手繪框 */
+.cards{display:grid;gap:34px;flex:1;align-content:center}
+.c2{grid-template-columns:repeat(2,1fr)}.c3{grid-template-columns:repeat(3,1fr)}.c4{grid-template-columns:repeat(4,1fr)}.c5{grid-template-columns:repeat(5,1fr)}.c5 .card h3{font-size:34px}.c5 .card p{font-size:28px}.c1{grid-template-columns:1fr}
+.card{position:relative;background:#fff;border:3px solid var(--navy);padding:30px 34px;
+  border-radius:255px 18px 225px 18px/18px 225px 18px 255px;box-shadow:8px 10px 0 var(--pale)}
+.card h3{margin:0 0 14px;font-size:44px;font-weight:900;color:var(--navy)}
+.card p{margin:0;font-size:36px;line-height:1.5}
+.card .note{margin-top:18px;font:700 30px "Noto Sans TC",sans-serif;color:#B5462E}
+.card .num{width:64px;height:64px;border-radius:50%;background:var(--orange);color:#fff;font:900 38px/64px "Noto Sans TC";text-align:center;margin-bottom:14px}
+.arrows .card:not(:last-child)::after{content:"➜";position:absolute;right:-36px;top:46%;font-size:40px;color:var(--orange)}
+.rd1{background:#F1F8FE}
+.stat .big{font:900 92px "Noto Sans TC";color:var(--blue);line-height:1.1;margin-bottom:10px}
+/* 步驟 */
+.steps{list-style:none;margin:auto 0;padding:0;display:flex;flex-direction:column;gap:34px}
+.steps li{display:flex;align-items:center;gap:30px;font-size:50px;font-weight:700;color:var(--navy);background:#fff;
+  border:3px solid var(--navy);padding:22px 34px;border-radius:18px 255px 18px 225px/225px 18px 255px 18px;box-shadow:8px 10px 0 var(--pale)}
+.steps .num{flex:none;width:80px;height:80px;border-radius:50%;background:var(--sky);color:#fff;font:900 46px/80px "Noto Sans TC";text-align:center}
+.qs li{font-weight:500;font-size:44px;color:var(--ink)}
+.qs .num:empty{display:none}
+.situation{font-size:52px;font-weight:900;color:var(--navy);margin:16px 0 40px;line-height:1.4}
+.situation .tag{display:inline-block;font-size:30px;background:var(--orange);color:#fff;border-radius:12px;padding:4px 18px;margin-right:18px;vertical-align:middle}
+/* 表格 */
+.tbl{margin:auto 0;border-collapse:separate;border-spacing:0;width:100%;font-size:40px;background:#fff;border:3px solid var(--navy);border-radius:20px;overflow:hidden}
+.tbl th{background:var(--navy);color:#fff;padding:22px;font-size:42px}
+.tbl td{padding:26px 22px;border-top:2px dashed var(--line);text-align:center;height:110px}
+.tbl.compact td{height:auto;padding:7px 22px;font-size:32px}.tbl.compact th{padding:12px}
+.tbl td:first-child{white-space:nowrap;font-weight:700;color:var(--navy)}
+.tbl th:nth-child(3),.tbl td:nth-child(3){background:#FFF8EC}
+.tbl th:nth-child(3){background:#B9741C}
+/* 圖片 */
+.shot{flex:1;display:flex;justify-content:center;align-items:center;min-height:0;gap:40px}
+.shot img{height:100%;width:auto;max-width:100%;object-fit:contain;border:3px solid var(--navy);border-radius:14px;box-shadow:12px 14px 0 var(--pale);background:#fff}
+.shot.two img{max-width:48%}
+.vid{flex:1;display:flex;justify-content:center;align-items:center;min-height:0}.vid video{height:100%;max-width:100%;border:3px solid var(--navy);border-radius:14px;box-shadow:12px 14px 0 var(--pale);background:#000}
+.shot.video iframe{height:100%;aspect-ratio:16/9;max-width:100%;border:3px solid var(--navy);border-radius:14px;box-shadow:12px 14px 0 var(--pale);background:#000}
+.shot.three img{max-width:31%}
+.prompt{position:relative;flex:1;min-height:0;margin:0}.prompt.code pre{margin:0;height:100%;max-height:none;overflow:auto;white-space:pre-wrap;background:#fff;border:3px solid var(--navy);border-radius:20px;padding:30px 40px;font:500 33px/1.55 'Noto Sans TC';color:var(--ink);box-shadow:12px 14px 0 var(--pale)}
+.prompt.code.small pre{font-size:23px;line-height:1.42;padding:20px 36px}
+.prompt.code.mid pre{font-size:27px;line-height:1.42;padding:22px 38px}
+.prompt.code.big pre{font-size:44px;line-height:1.6;padding:40px 150px 40px 50px}
+.steps.compact{gap:18px}.steps.compact li{font-size:38px;padding-top:14px;padding-bottom:14px}.steps.compact .num{width:64px;height:64px;font-size:36px;line-height:64px}
+.prompt.code .copy{font-size:26px;padding:8px 22px;right:20px;top:20px;border-radius:20px}
+.dls{display:flex;flex-wrap:wrap;gap:24px;margin-top:20px}
+.st{display:flex;gap:60px;flex:1;min-height:0;align-items:center}
+.st-img{flex:1.15;display:flex;justify-content:center;min-height:0;height:100%;align-items:center}
+.st-img img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 2px #1E3A6E) drop-shadow(12px 14px 0 #DCEEFB)}
+.st-text{flex:1}
+.st-text p{font-size:42px;line-height:1.6;margin:0 0 28px}
+.st-text p b{color:#B5462E}
+.st.small .st-img{flex:.42}.st.small .st-text p{font-size:29px;line-height:1.22;margin:0 0 3px}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ill{mix-blend-mode:multiply}
+.illus{flex:1;min-height:0;display:flex;justify-content:center}
+.illus .ill{height:100%;max-width:100%;object-fit:contain;border-radius:24px}
+.ill.missing{display:flex;align-items:center;justify-content:center;border:4px dashed var(--line);color:var(--muted);font-size:40px;width:70%;border-radius:30px}
+.quote{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;margin:0;font:700 72px/1.55 "Noto Sans TC",sans-serif;color:var(--navy)}
+.quote.q2{flex:none;font-size:64px;margin:20px 0 40px}
+.rel{margin-top:26px;display:flex;align-items:center;gap:22px;font:900 44px 'Noto Sans TC';color:var(--navy)}.rel .tag{flex:none;font:700 28px 'Noto Sans TC';color:#fff;background:var(--sky);border-radius:30px;padding:8px 22px}
+.aiday{display:flex;gap:60px;align-items:center;flex:1}
+.aiday .bul{flex:1;font-size:44px}
+.qr{width:420px;border:3px solid var(--navy);border-radius:14px;background:#fff;padding:10px}
+.srcs{display:grid;grid-template-columns:1fr 1fr;gap:40px;font-size:31px;line-height:1.6}
+.srcs ul{margin:0;padding-left:1em}
+/* 新聞卡 */
+.newsgrid{flex:1;display:grid;gap:40px;align-content:center;min-height:0}
+.newsgrid.n2{grid-template-columns:1fr 1fr}.newsgrid.n1{grid-template-columns:1fr}.newsgrid.n3{grid-template-columns:repeat(3,1fr)}
+.news{position:relative;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--navy);border-radius:22px;padding:30px 36px 64px;box-shadow:12px 14px 0 var(--pale);overflow:hidden}
+.news::before{content:"NEWS";position:absolute;right:-10px;top:-18px;font:900 120px "Noto Sans TC";color:#F1F6FC;z-index:0}
+.news>*{position:relative}
+.nw-k{display:flex;gap:16px;align-items:center;font-size:28px;color:var(--muted)}
+.nw-k b{background:#B5462E;color:#fff;border-radius:10px;padding:3px 14px;font-size:26px}
+.news h3{margin:18px 0 14px;font:900 50px/1.3 "Noto Sans TC";color:var(--navy)}
+.news p{margin:0;font-size:34px;line-height:1.5}
+.nw-go{position:absolute;right:30px;bottom:20px;font:700 24px "Noto Sans TC";color:var(--blue)}
+.ni{flex:1;display:flex;gap:70px;align-items:center;min-height:0}
+.ni-img{height:100%;display:flex;align-items:center}
+.ni-img img{height:100%;max-height:640px;border:3px solid var(--navy);border-radius:16px;box-shadow:12px 14px 0 var(--pale);background:#fff}
+.ni-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:26px;flex:1}
+.ni-steps li{display:flex;gap:26px;align-items:center;background:#fff;border:3px solid var(--navy);border-radius:18px;padding:18px 28px;font-size:40px}
+.ni-steps b{flex:none;font:900 44px "Noto Sans TC";color:#fff;background:var(--orange);border-radius:12px;padding:4px 16px}
+/* 臺北／酷AI 底部標籤 */
+#tpbar{position:absolute;left:40px;bottom:22px;display:flex;align-items:center;gap:12px;font:700 22px "Noto Sans TC";color:var(--navy);pointer-events:none}
+#tpbar i{font-style:normal;background:var(--orange);color:#fff;border-radius:999px;padding:2px 14px;font-size:20px}
+@media print{#tpbar{display:none}}
+/* 補充按鈕 */
+.supbtn{position:absolute;right:110px;bottom:24px;font:700 28px "Noto Sans TC";color:#fff;background:var(--blue);border:none;border-radius:30px;padding:10px 26px;cursor:pointer;box-shadow:0 4px 0 var(--navy)}
+.supbtn:hover{background:var(--navy)}
+/* 側欄（補充／講稿） */
+#panel{position:fixed;top:0;right:0;bottom:0;width:min(560px,92vw);background:#fff;box-shadow:-8px 0 30px rgba(30,58,110,.18);transform:translateX(102%);transition:transform .25s;z-index:20;display:flex;flex-direction:column}
+#panel.open{transform:none}
+#panel header{display:flex;gap:8px;padding:14px 16px;border-bottom:2px solid var(--pale);align-items:center}
+#panel header button{font:700 16px "Noto Sans TC";border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:20px;padding:6px 14px;cursor:pointer}
+#panel header button.act{background:var(--navy);color:#fff}
+#panel header .x{margin-left:auto;border:none;font-size:22px}
+#pbody{overflow:auto;padding:18px 20px 40px;font-size:17px;line-height:1.7}
+#pbody .notes{white-space:pre-wrap}
+.sup{border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+.sup h4{margin:6px 0 8px;font-size:19px;color:var(--navy)}
+.sup ul,.sup ol{margin:0;padding-left:1.3em}
+.sup-k{display:flex;gap:8px;font-size:13px}
+.kind{background:var(--pale);color:var(--navy);border-radius:8px;padding:1px 8px;font-weight:700}
+.ev{border-radius:8px;padding:1px 8px;background:#eef1f5;color:var(--muted)}
+.ev-AI\ 生成待查證{background:#FFF1DC;color:#9A5B10}
+.rd{margin-top:10px}.rd summary{font-weight:700;color:var(--navy);cursor:pointer}.rd p{margin:8px 0;text-indent:0}
+})();
+</script>
+<script src="assets/vendor/three.min.js"></script>
+<script>
+// three.js 視覺層（載入失敗就不顯示，不影響簡報）
+// 封面／章節／結尾：臺北天際線＋101＋往上飄的酷AI 對話泡泡；內容頁：右上角旋轉的小 101
+(function(){if(!window.THREE)return;
+const cv=document.createElement('canvas');
+cv.style.cssText='position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;mix-blend-mode:multiply';
+let R;try{R=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true});}catch(e){return;}
+document.documentElement.classList.add('three');
+R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(1920,1080,false);
+const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(42,1920/1080,1,3000);cam.position.z=900;
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');
+x.beginPath();x.arc(32,32,26,0,7);x.fillStyle='#fff';x.fill();const tex=new THREE.CanvasTexture(c);
+const V=(a,b,c)=>new THREE.Vector3(a,b,c);
+// 每個群組記下自己的材質，方便整組淡入淡出
+function layer(){const g=new THREE.Group();g.mats=[];scene.add(g);
+  g.mat=(m,o)=>{m.transparent=true;m.base=o;m.opacity=0;g.mats.push(m);return m;};
+  g.lines=(arr,color,o)=>{const b=new THREE.BufferGeometry().setFromPoints(arr);const l=new THREE.LineSegments(b,g.mat(new THREE.LineBasicMaterial({color}),o));g.add(l);return l;};
+  g.dots=(arr,color,size,o)=>{const b=new THREE.BufferGeometry().setFromPoints(arr);const m=new THREE.Points(b,g.mat(new THREE.PointsMaterial({color,size,map:tex,alphaTest:.05}),o));g.add(m);return m;};
+  g.a=0;g.fade=(to,k)=>{g.a+=(to-g.a)*k;g.visible=g.a>.01;g.mats.forEach(m=>m.opacity=m.base*g.a);};return g;}
+// 沿線跑的訊號
+function pulses(g,edges,n,color,size){const S=Array.from({length:n},()=>({e:edges[Math.floor(rnd()*edges.length)],t:rnd(),v:.25+rnd()*.5}));
+  const pts=S.map(()=>V(0,0,0)),m=g.dots(pts,color,size,1);
+  return (dt,k)=>{S.forEach((s,i)=>{s.t+=s.v*dt*k;if(s.t>1){s.t=0;s.e=edges[Math.floor(Math.random()*edges.length)];}pts[i].lerpVectors(s.e[0],s.e[1],s.t);});m.geometry.setFromPoints(pts);};}
+
+// ── 1. 節點網路（中央留空給標題）
+const net=layer(),P=[];
+while(P.length<130){const a=(rnd()-.5)*1900,b=(rnd()-.5)*1000,d=(rnd()-.5)*500;if(Math.abs(a)<520&&Math.abs(b)<230)continue;P.push(V(a,b,d));}
+const E=[];P.forEach((a,i)=>{P.map((b,j)=>[a.distanceTo(b),j]).sort((u,v)=>u[0]-v[0]).slice(1,4).forEach(([d,j])=>{if(d<330&&i<j)E.push([P[i],P[j]]);});});
+net.lines(E.flat(),0x6FA8DC,.6);net.dots(P,0x3D7DC8,16,.75);
+const netPulse=pulses(net,E,22,0xF2994A,20);
+
+// ── 2. 臺北 101（低多邊形線框）：封面／章節是天際線大圖，內容頁是右上角小模型
+function make101(g,s,edgeCol){
+  const face=g.mat(new THREE.MeshBasicMaterial({color:0xEAF3FC}),1),face2=g.mat(new THREE.MeshBasicMaterial({color:0xD3E2F4}),1),
+        edge=g.mat(new THREE.LineBasicMaterial({color:edgeCol}),1);
+  const tw=new THREE.Group();g.add(tw);let y=0;
+  const put=(geo,h,m)=>{const me=new THREE.Mesh(geo,m||face);me.position.y=y+h/2;me.rotation.y=Math.PI/4;tw.add(me);
+    const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),edge);l.position.copy(me.position);l.rotation.copy(me.rotation);tw.add(l);y+=h;};
+  put(new THREE.CylinderGeometry(46*s,54*s,40*s,4),40*s,face2);                 // 裙樓
+  put(new THREE.CylinderGeometry(30*s,38*s,70*s,4),70*s);                       // 基座（往上收）
+  for(let i=0;i<8;i++)put(new THREE.CylinderGeometry(34*s,26*s,38*s,4),38*s,i%2?face:face2); // 八節「花開富貴」往上外擴
+  put(new THREE.CylinderGeometry(16*s,22*s,26*s,4),26*s,face2);
+  put(new THREE.CylinderGeometry(10*s,13*s,20*s,4),20*s);
+  put(new THREE.CylinderGeometry(1.5*s,3*s,70*s,6),70*s);                       // 塔尖
+  tw.top=y;return tw;}
+// 酷AI 對話泡泡貼圖
+function bubbleTex(txt,bg){const c=document.createElement('canvas');c.width=256;c.height=160;const x=c.getContext('2d');
+  x.fillStyle=bg;x.beginPath();x.roundRect(8,8,240,110,50);x.fill();x.beginPath();x.moveTo(70,112);x.lineTo(54,150);x.lineTo(110,114);x.fill();
+  x.fillStyle='#fff';x.font='900 52px "Noto Sans TC",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,128,64);return new THREE.CanvasTexture(c);}
+const BUB=[['酷AI',0xF0A23B,'#F0A23B'],['AI',0x3B82C4,'#3B82C4'],['?',0x5AA9E6,'#5AA9E6'],['ABC',0xF0A23B,'#F0A23B'],['臺北',0x1E3A6E,'#1E3A6E']].map(b=>bubbleTex(b[0],b[2]));
+
+// 2a. 天際線（封面／章節／結尾）
+const city=layer();city.position.set(0,-345,0);
+const T101=make101(city,1.15,0x1F3A6E);T101.position.set(-470,0,40);
+const bx=[],bedge=city.mat(new THREE.LineBasicMaterial({color:0x6FA8DC}),.9),bface=city.mat(new THREE.MeshBasicMaterial({color:0xF3F8FE}),1);
+for(let i=0;i<34;i++){const w=30+rnd()*60,h=40+rnd()*170,d=30+rnd()*50,x=-760+i*46+rnd()*20;if(Math.abs(x+470)<70)continue;
+  const geo=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(geo,bface);m.position.set(x,h/2,-160-rnd()*260);city.add(m);
+  const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),bedge);l.position.copy(m.position);city.add(l);bx.push(m.position.clone().add(V(0,h/2,0)));}
+const bubs=Array.from({length:9},(_,i)=>{const sp=new THREE.Sprite(city.mat(new THREE.SpriteMaterial({map:BUB[i%BUB.length]}),.95));
+  sp.scale.set(70,44,1);sp.u={o:bx[Math.floor(rnd()*bx.length)]||V(0,0,0),t:rnd(),v:.05+rnd()*.06};city.add(sp);return sp;});
+const tip=V(-470,T101.top+40,40),SK=bx.map(p=>[tip,p]).filter((_,i)=>i%3===0);
+city.lines(SK.flat(),0xF2C48A,.35);const skyPulse=pulses(city,SK,10,0xF2994A,16);
+
+// 2b. 右上角小 101（內容頁）＋繞行的酷AI 泡泡
+const hub=layer();hub.position.set(560,120,0);
+const M101=make101(hub,.34,0x1F3A6E);M101.position.y=0;
+const ring=[];for(let i=0;i<=64;i++){const a=i/64*Math.PI*2;ring.push(V(Math.cos(a)*70,0,Math.sin(a)*70));}
+const rg=[];for(let i=0;i<64;i++)rg.push(ring[i],ring[i+1]);const rl=hub.lines(rg,0xF0A23B,.5);rl.position.y=95;
+const hb=new THREE.Sprite(hub.mat(new THREE.SpriteMaterial({map:BUB[0]}),1));hb.scale.set(54,34,1);hub.add(hb);
+const hubPulse=()=>{};
+const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let host=null,last=0,full=true,boost=0,pose=0,idx=0;
+function frame(t){requestAnimationFrame(frame);
+  const on=document.querySelector('.slide.on');
+  if(on!==host){host=on;if(!on)return;if(on.classList.contains("t-cover"))on.appendChild(cv);else on.insertBefore(cv,on.firstChild);full=/t-(cover|divider|closing)/.test(on.className);
+    idx=[...on.parentNode.children].indexOf(on);pose=((idx%5)-2)*.13;boost=1;}
+  if(!host)return;const dt=Math.min((t-last)/1000,.05);last=t;const k=still?1:Math.min(1,dt*5);
+  net.fade(full?.55:0,k);city.fade(full?1:0,k);hub.fade(full?0:1,k);boost*=1-Math.min(1,dt*1.6);
+  if(!still){net.rotation.y+=(pose+Math.sin(t/9000)*.2-net.rotation.y)*Math.min(1,dt*2.5);net.rotation.x=Math.cos(t/11000)*.1;
+    M101.rotation.y=t/4000;const a=t/1500;hb.position.set(Math.cos(a)*70,95+Math.sin(t/700)*6,Math.sin(a)*70);
+    city.rotation.y=Math.sin(t/12000)*.06;bubs.forEach(b=>{b.u.t+=b.u.v*dt;if(b.u.t>1){b.u.t=0;b.u.o=bx[Math.floor(Math.random()*bx.length)];}b.position.set(b.u.o.x,b.u.o.y+30+b.u.t*260,b.u.o.z);b.material.opacity=.95*Math.sin(b.u.t*Math.PI)*city.a;});}
+  const sp=still?0:1+boost*3;if(net.visible)netPulse(dt,sp);if(city.visible)skyPulse(dt,sp);
+  R.render(scene,cam);}
+requestAnimationFrame(frame);})();
+</script>
+<script>
+// 內容頁左下角：臺北市數位學習中心 × 酷AI 標籤
+(function(){const bar=document.createElement('div');bar.id='tpbar';bar.innerHTML='<i>酷AI</i>臺北市數位學習中心';
+let host=null;(function tick(){requestAnimationFrame(tick);const on=document.querySelector('.slide.on');
+ if(on!==host){host=on;if(on&&!/t-(cover|closing)/.test(on.className))on.appendChild(bar);else bar.remove();}})();})();
+</script>
+</body>
+</html>
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/bin/zsh -lc 'find .. -name AGENTS.md -print' in /Volumes/WD2T/Projects/ai-b3-1121
+exec
+/bin/zsh -lc "DISABLE_TELEMETRY=1 NPM_CONFIG_CACHE=/tmp/npm-cache npx --offline -y modern-web-guidance@1.0.0 search 'reduced motion animation' --skill-version 2026_11_09-5bcc021b" in /Volumes/WD2T/Projects/ai-b3-1121
+ exited 1 in 422ms:
+npm error code ENOTCACHED
+npm error request to https://registry.npmjs.org/modern-web-guidance failed: cache mode is 'only-if-cached' but no cached response is available.
+npm error A complete log of this run can be found in: /tmp/npm-cache/_logs/2026-11-21T01_56_01_172Z-debug-0.log
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+目前確認舊的中山狀態列樣式仍留在模板，小 101 的位置也可能接近標題。前端指引工具在離線快取中不可用；我會沿用現有相容的 CSS 與 three.js 做法，並保留 WebGL 失敗與減少動態效果的退路。
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "python3.13 - <<'PY'
+from pathlib import Path
+p=Path('src/template.html')
+s=p.read_text()
+s=s.replace('family=Caveat:wght@600&','')
+s=s.replace('.inner{position:absolute;inset:70px 120px 70px 120px;display:flex;flex-direction:column}', '.inner{position:absolute;inset:70px 120px 70px 120px;display:flex;flex-direction:column;z-index:1}')
+a=s.index('/* ── 取自中山平台界面'); b=s.index('@keyframes slidein',a)
+s=s[:a]+'''.slide .kicker{align-self:flex-start;width:fit-content;font-size:24px;color:#fff;background:#18409a;border-radius:999px;padding:5px 22px 6px;margin-bottom:12px;letter-spacing:.08em}
+.slide .kicker::before{content:\"\";display:inline-block;width:12px;height:12px;border-radius:50%;background:#f2a516;margin-right:12px;vertical-align:2px}
+.slide .kicker.big{font-size:32px;padding:8px 30px 9px;margin-bottom:22px}
+'''+s[b:]
+s=s.replace('font:600 30px Caveat,cursive','font:700 26px \"Noto Sans TC\",sans-serif')
+s=s.replace('.cover-text{position:relative;text-align:center;background:rgba(251,253,255,.82);padding:40px 70px;border-radius:40px;box-shadow:0 0 60px 30px rgba(251,253,255,.85)}','.cover-text{position:relative;text-align:center;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(245,250,255,.91));padding:44px 76px;border:2px solid rgba(255,255,255,.95);border-radius:36px;box-shadow:0 24px 80px rgba(30,58,110,.14),0 0 70px 30px rgba(251,253,255,.72)}\\n.cover-text::before{content:\"\";position:absolute;top:0;left:38%;right:38%;height:6px;border-radius:0 0 6px 6px;background:linear-gradient(90deg,var(--blue),var(--orange))}')
+s=s.replace('.dv-ill .ill{width:100%;height:100%;object-fit:contain}', '.dv-ill .ill{width:100%;height:100%;object-fit:contain;transform:rotate(2deg);filter:drop-shadow(0 24px 28px rgba(30,58,110,.16))}')
+s=s.replace('.stat .big{', '.stat{border-radius:24px;padding:38px;background:linear-gradient(155deg,#fff,#f2f8fe);box-shadow:0 14px 32px rgba(30,58,110,.1);border:2px solid var(--line)}\\n.stat .big{')
+s=s.replace('.tbl td{padding:26px 22px;border-top:2px dashed var(--line);text-align:center;height:110px}', '.tbl td{padding:26px 22px;border-top:2px solid #e5eef7;text-align:center;height:110px}.tbl tbody tr:nth-child(even) td:not(:nth-child(3)){background:#f5f9fd}')
+s=s.replace('.shot.three img{max-width:31%}', '.shot.three{gap:24px}.shot.three img{width:calc((100% - 48px)/3);height:auto;max-height:100%;max-width:none}')
+s=s.replace('.st{display:flex;gap:60px;', '.st{display:flex;gap:42px;')
+s=s.replace('.st.small .st-img{flex:.42}', '.st.small .st-img{flex:.55}')
+s=s.replace('.newsgrid{flex:1;display:grid;gap:40px;align-content:center;min-height:0}', '.newsgrid{flex:1;display:grid;gap:32px;align-content:center;grid-auto-rows:1fr;min-height:0;padding:12px 0 20px}')
+s=s.replace('background:#fff;border:3px solid var(--navy);border-radius:22px;padding:30px 36px 64px;box-shadow:12px 14px 0 var(--pale);overflow:hidden}', 'background:linear-gradient(150deg,#fff,#f6faff);border:2px solid var(--line);border-top:7px solid var(--blue);border-radius:22px;padding:38px 40px 78px;box-shadow:0 16px 36px rgba(30,58,110,.1);overflow:hidden}')
+s=s.replace('.nw-k b{background:#B5462E;color:#fff;border-radius:10px;padding:3px 14px;font-size:26px}', '.nw-k b{background:var(--navy);color:#fff;border-radius:999px;padding:6px 18px;font-size:25px}.nw-k span{font-weight:700;letter-spacing:.03em}')
+s=s.replace('.news h3{margin:18px 0 14px;font:900 50px/1.3', '.news h3{margin:28px 0 20px;font:900 50px/1.3')
+s=s.replace('.news p{margin:0;font-size:34px;line-height:1.5}', '.news p{margin:0;font-size:34px;line-height:1.55;color:#4b5d77}')
+s=s.replace('mix-blend-mode:multiply\\';','mix-blend-mode:multiply;z-index:0\\';')
+s=s.replace('for(let i=0;i<8;i++)put(new THREE.CylinderGeometry(34*s,26*s,38*s,4),38*s,i%2?face:face2);', 'for(let i=0;i<8;i++){put(new THREE.CylinderGeometry(37*s,25*s,38*s,4),38*s,i%2?face:face2);put(new THREE.CylinderGeometry(38*s,38*s,3*s,4),3*s,face2);}')
+s=s.replace('put(new THREE.CylinderGeometry(16*s,22*s,26*s,4),26*s,face2);', 'put(new THREE.CylinderGeometry(19*s,29*s,24*s,4),24*s,face2);')
+s=s.replace('put(new THREE.CylinderGeometry(1.5*s,3*s,70*s,6),70*s);', 'put(new THREE.CylinderGeometry(.8*s,3*s,82*s,6),82*s);')
+s=s.replace('const bx=[],bedge=city.mat(new THREE.LineBasicMaterial({color:0x6FA8DC}),.9),bface=city.mat(new THREE.MeshBasicMaterial({color:0xF3F8FE}),1);', 'const bx=[],bedge=city.mat(new THREE.LineBasicMaterial({color:0x6FA8DC}),.75),bface=city.mat(new THREE.MeshBasicMaterial({color:0xE7F1FB}),1),farEdge=city.mat(new THREE.LineBasicMaterial({color:0xB9D3EA}),.5),farFace=city.mat(new THREE.MeshBasicMaterial({color:0xF5F9FD}),1);')
+s=s.replace('const geo=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(geo,bface);m.position.set(x,h/2,-160-rnd()*260);city.add(m);\\n  const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),bedge);', 'const far=i%2===0,geo=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(geo,far?farFace:bface);m.position.set(x,h/2,far?-390:-120);city.add(m);\\n  const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),far?farEdge:bedge);')
+s=s.replace('const hub=layer();hub.position.set(560,120,0);', 'const hub=layer();hub.position.set(665,235,0);')
+s=s.replace('make101(hub,.34,', 'make101(hub,.20,')
+s=s.replace('hb.scale.set(54,34,1)', 'hb.scale.set(38,24,1)')
+s=s.replace(\"const still=matchMedia('(prefers-reduced-motion: reduce)').matches;\", \"const motion=matchMedia('(prefers-reduced-motion: reduce)');let still=motion.matches;motion.addEventListener('change',e=>{still=e.matches;});\")
+s=s.replace('const sp=still?0:1+boost*3;if(net.visible)netPulse(dt,sp);if(city.visible)skyPulse(dt,sp);', '''if(still){M101.rotation.y=0;hb.position.set(55,80,0);city.rotation.y=0;net.rotation.set(0,0,0);bubs.forEach(b=>{b.position.set(b.u.o.x,b.u.o.y+30+b.u.t*260,b.u.o.z);b.scale.set(70,44,1);b.material.opacity=.8*city.a;});}
+  const sp=still?0:1+boost*3;if(net.visible)netPulse(dt,sp);if(city.visible)skyPulse(dt,sp);''')
+s=s.replace('b.position.set(b.u.o.x,b.u.o.y+30+b.u.t*260,b.u.o.z);b.material.opacity=.95*Math.sin(b.u.t*Math.PI)*city.a;', 'b.position.set(b.u.o.x+Math.sin(t/1800+b.u.t*6)*12,b.u.o.y+30+b.u.t*260,b.u.o.z);const scale=1+.07*Math.sin(t/1200+b.u.t*6);b.scale.set(70*scale,44*scale,1);b.material.opacity=.95*Math.sin(b.u.t*Math.PI)*city.a;')
+s=s.replace('.cover{position:absolute;inset:-70px -120px;display:flex;align-items:center;justify-content:center}', '.cover{position:absolute;inset:-70px -120px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 25%,rgba(255,255,255,.7),transparent 58%)}')
+p.write_text(s)
+PY
+python3.13 src/build.py
+git diff --stat -- src/content.py
+git diff --stat -- src/template.html src/build.py docs/index.html" in /Volumes/WD2T/Projects/ai-b3-1121
+ succeeded in 0ms:
+slides 21 with supplements 10
+ docs/index.html   | 77 ++++++++++++++++++++++---------------------------------
+ src/template.html | 77 ++++++++++++++++++++++---------------------------------
+ 2 files changed, 60 insertions(+), 94 deletions(-)
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'command -v chromium || command -v google-chrome || command -v playwright || true' in /Volumes/WD2T/Projects/ai-b3-1121
+ succeeded in 0ms:
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/bin/zsh -lc "python3.13 - <<'PY'
+import re, pathlib, subprocess
+s=pathlib.Path('src/template.html').read_text()
+for i, code in enumerate(re.findall(r'<script(?:\\s["'^>]*)?>(.*?)</script>'"',s,re.S)):
+ if code.strip() and '/*SIDE*/' not in code:
+  p=subprocess.run(['node','--check'],input=code,text=True,capture_output=True)
+  print(f'script {i}:', 'OK' if p.returncode==0 else p.stderr)
+PY
+rg -n 'zsbar|zslock|zsstat|\\.zs\\b|Caveat|cursive' src/template.html
+ git status --short" in /Volumes/WD2T/Projects/ai-b3-1121
+ succeeded in 99ms:
+script 1: OK
+script 3: OK
+script 4: OK
+ M docs/index.html
+ M src/template.html
+?? .codex_last.txt
+?? .codex_run.log
+?? CODEX_TASK.md
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+已完成簡報視覺調整，並重新產生 [docs/index.html](/Volumes/WD2T/Projects/ai-b3-1121/docs/index.html)。
+
+主要調整包括：加強臺北 101 的八節外擴造型與腰線、為天際線加入遠近層次、讓對話泡泡輕微漂浮縮放，並縮小及移動內容頁的 101。封面文字卡、章節圖片、新聞卡、數字卡、表格與圖片版面也已調整；舊的中山狀態列 CSS 已移除，頁碼改用 Noto Sans TC。
+
+驗證結果：
+
+- 建置成功，輸出 `slides 21`。
+- `src/content.py` 的 diff 為空，未修改內容。
+- 已檢查相關 JavaScript 語法；WebGL 初始化失敗的退路與減少動態效果處理仍保留。
+- 此環境未找到可用的瀏覽器指令，**尚未進行截圖與實際投影畫面驗收**，請 Claude 接續確認。未建立 commit。
+
+### Modern Web Guidance
+
+我嘗試查詢動畫與減少動態效果的指引，但工具離線快取不可用，因此本次未套用該工具的指南。
+hook: Stop
+hook: Stop
+hook: Stop Completed
+hook: Stop Completed
+tokens used
+40,394
+已完成簡報視覺調整，並重新產生 [docs/index.html](/Volumes/WD2T/Projects/ai-b3-1121/docs/index.html)。
+
+主要調整包括：加強臺北 101 的八節外擴造型與腰線、為天際線加入遠近層次、讓對話泡泡輕微漂浮縮放，並縮小及移動內容頁的 101。封面文字卡、章節圖片、新聞卡、數字卡、表格與圖片版面也已調整；舊的中山狀態列 CSS 已移除，頁碼改用 Noto Sans TC。
+
+驗證結果：
+
+- 建置成功，輸出 `slides 21`。
+- `src/content.py` 的 diff 為空，未修改內容。
+- 已檢查相關 JavaScript 語法；WebGL 初始化失敗的退路與減少動態效果處理仍保留。
+- 此環境未找到可用的瀏覽器指令，**尚未進行截圖與實際投影畫面驗收**，請 Claude 接續確認。未建立 commit。
+
+### Modern Web Guidance
+
+我嘗試查詢動畫與減少動態效果的指引，但工具離線快取不可用，因此本次未套用該工具的指南。

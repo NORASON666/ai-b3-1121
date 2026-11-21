@@ -7,7 +7,7 @@
 <meta name="description" content="2026-11-21 B3 數位教學指引儲備講師培訓工作坊試講：把《115 年中小學教師數位與 AI 教學指引》三個模組接到臺北教室與酷AI，用真實新聞看七大風險。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --navy:#1E3A6E; --ink:#22314d; --blue:#3B82C4; --sky:#5AA9E6; --pale:#DCEEFB; --paper:#FBFDFF;
@@ -22,34 +22,14 @@ html,body{margin:0;height:100%;background:#E9EFF6;color:var(--ink);font-family:"
 .slide.on{display:block}
 .slide:not(.t-cover):not(.t-closing):not(.t-divider)::after{content:"";position:absolute;right:60px;top:36px;width:360px;height:160px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='160'><path d='M10 140 C 90 150 120 60 200 90 S 280 40 300 40' fill='none' stroke='%235AA9E6' stroke-width='3' stroke-dasharray='8 9'/><path d='M300 40 l52 -24 -18 50 -12 -16 z' fill='white' stroke='%231E3A6E' stroke-width='3' stroke-linejoin='round'/></svg>") no-repeat;opacity:.7;pointer-events:none}
 .slide::before{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:linear-gradient(90deg,var(--sky),var(--pale) 60%,var(--orange))}
-.inner{position:absolute;inset:70px 120px 70px 120px;display:flex;flex-direction:column}
+.inner{position:absolute;inset:70px 120px 70px 120px;display:flex;flex-direction:column;z-index:1}
 .three .slide:not(.t-cover):not(.t-closing):not(.t-divider)::after{display:none}
 @media (prefers-reduced-motion:no-preference){.slide.on .inner{animation:slidein .4s cubic-bezier(.2,.7,.2,1)}}
-/* ── 取自中山平台界面：膠囊標籤、藍紅雙線、底部狀態列（校徽、GPU 即時曲線、儀表式頁碼） */
 .slide .kicker{align-self:flex-start;width:fit-content;font-size:24px;color:#fff;background:#18409a;border-radius:999px;padding:5px 22px 6px;margin-bottom:12px;letter-spacing:.08em}
 .slide .kicker::before{content:"";display:inline-block;width:12px;height:12px;border-radius:50%;background:#f2a516;margin-right:12px;vertical-align:2px}
-.zs .slide::before{height:6px;background:linear-gradient(#18409a 0 4px,#d7191c 4px)}
-.zs .slide:not(.t-cover):not(.t-closing) .pno{display:none}
 .slide .kicker.big{font-size:32px;padding:8px 30px 9px;margin-bottom:22px}
-.zslock{position:absolute;left:48px;top:30px;display:flex;align-items:center;gap:10px;font:900 20px "Noto Sans TC",sans-serif;color:#18409a;z-index:2}
-.zslock img{height:42px}.zslock i{font-style:normal;color:#56637d;font-weight:500}
-.zslock .chip{display:flex;align-items:center;background:linear-gradient(90deg,#17b3b5,#6fd4c6);border-radius:10px;padding:7px 12px}.zslock .chip img{height:20px}
-.zsstat{display:inline-flex;align-items:center;gap:12px;margin-top:26px;font:500 26px "Noto Sans TC",sans-serif;color:#13203a;background:#fff;border:2px solid #d9e1ee;border-radius:999px;padding:8px 26px}
-.zsstat::before{content:"";width:14px;height:14px;border-radius:50%;background:#1f9d55;box-shadow:0 0 0 5px rgba(31,157,85,.18)}
-@media (prefers-reduced-motion:no-preference){.zsstat::before{animation:zsp 1.8s ease-in-out infinite}}
-@keyframes zsp{50%{box-shadow:0 0 0 10px rgba(31,157,85,0)}}
-#zsbar{position:absolute;left:36px;right:28px;bottom:10px;height:34px;display:flex;align-items:center;gap:12px;font:700 18px "Noto Sans TC",sans-serif;color:#18409a;pointer-events:none}
-#zsbar img{height:32px}
-#zsbar .lg{display:flex;align-items:center;gap:6px;font-size:15px;color:#56637d;margin-left:14px}
-#zsbar .lg i{width:22px;height:4px;border-radius:2px;background:#18409a}#zsbar .lg i.b{background:#76b900;margin-left:10px}
-#zsbar canvas{flex:1;height:34px;min-width:0}
-#zsbar svg{width:118px;height:74px;align-self:flex-end;margin-bottom:-4px}
-#zsbar .trk{fill:none;stroke:#d3dcec;stroke-width:12;stroke-linecap:round}
-#zsbar .val{fill:none;stroke:#18409a;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
-#zsbar .num{font-size:30px;font-weight:800;fill:#13203a}#zsbar .unit{font-size:13px;fill:#56637d;font-weight:500}
-@media print{#zsbar{display:none}}
 @keyframes slidein{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-.pno{position:absolute;right:40px;bottom:30px;font:600 30px Caveat,cursive;color:var(--blue)}
+.pno{position:absolute;right:40px;bottom:30px;font:700 26px "Noto Sans TC",sans-serif;color:var(--blue)}
 .kicker{font:700 30px "Noto Sans TC",sans-serif;color:var(--blue);letter-spacing:.06em;margin-bottom:6px}
 .kicker::before{content:"✎ ";color:var(--orange)}
 .kicker.big{font-size:44px}
@@ -61,9 +41,10 @@ html,body{margin:0;height:100%;background:#E9EFF6;color:var(--ink);font-family:"
 .link{font-size:32px;color:var(--blue);margin-top:20px;font-weight:700}
 mark{background:linear-gradient(transparent 55%,var(--pale) 55%);color:inherit}
 /* 封面 */
-.cover{position:absolute;inset:-70px -120px;display:flex;align-items:center;justify-content:center}
+.cover{position:absolute;inset:-70px -120px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 25%,rgba(255,255,255,.7),transparent 58%)}
 .cover .ill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.cover-text{position:relative;text-align:center;background:rgba(251,253,255,.82);padding:40px 70px;border-radius:40px;box-shadow:0 0 60px 30px rgba(251,253,255,.85)}
+.cover-text{position:relative;text-align:center;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(245,250,255,.91));padding:44px 76px;border:2px solid rgba(255,255,255,.95);border-radius:36px;box-shadow:0 24px 80px rgba(30,58,110,.14),0 0 70px 30px rgba(251,253,255,.72)}
+.cover-text::before{content:"";position:absolute;top:0;left:38%;right:38%;height:6px;border-radius:0 0 6px 6px;background:linear-gradient(90deg,var(--blue),var(--orange))}
 .cover .org{font:700 34px "Noto Sans TC",sans-serif;color:var(--blue)}
 .cover h1{font-weight:900;font-size:112px;line-height:1.15;color:var(--navy);margin:18px 0}
 .cover h1 mark{border-bottom:8px solid var(--orange)}
@@ -77,7 +58,7 @@ mark{background:linear-gradient(transparent 55%,var(--pale) 55%);color:inherit}
 .dv-title{font-weight:900;font-size:130px;color:var(--navy);margin:10px 0;line-height:1.1}
 .dv-sub{font:700 60px "Noto Sans TC",sans-serif;color:var(--ink);border-bottom:8px solid var(--orange);display:inline-block;padding-bottom:6px}
 .dv-ill{width:760px;height:760px;flex:none;display:flex;align-items:center}
-.dv-ill .ill{width:100%;height:100%;object-fit:contain}
+.dv-ill .ill{width:100%;height:100%;object-fit:contain;transform:rotate(2deg);filter:drop-shadow(0 24px 28px rgba(30,58,110,.16))}
 /* 條列 */
 .bul{margin:auto 0;padding-left:1.2em;font-size:50px;line-height:1.55}
 .bul li{margin:8px 0}
@@ -95,6 +76,7 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 .card .num{width:64px;height:64px;border-radius:50%;background:var(--orange);color:#fff;font:900 38px/64px "Noto Sans TC";text-align:center;margin-bottom:14px}
 .arrows .card:not(:last-child)::after{content:"➜";position:absolute;right:-36px;top:46%;font-size:40px;color:var(--orange)}
 .rd1{background:#F1F8FE}
+.stat{border-radius:24px;padding:38px;background:linear-gradient(155deg,#fff,#f2f8fe);box-shadow:0 14px 32px rgba(30,58,110,.1);border:2px solid var(--line)}
 .stat .big{font:900 92px "Noto Sans TC";color:var(--blue);line-height:1.1;margin-bottom:10px}
 /* 步驟 */
 .steps{list-style:none;margin:auto 0;padding:0;display:flex;flex-direction:column;gap:34px}
@@ -108,7 +90,7 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 /* 表格 */
 .tbl{margin:auto 0;border-collapse:separate;border-spacing:0;width:100%;font-size:40px;background:#fff;border:3px solid var(--navy);border-radius:20px;overflow:hidden}
 .tbl th{background:var(--navy);color:#fff;padding:22px;font-size:42px}
-.tbl td{padding:26px 22px;border-top:2px dashed var(--line);text-align:center;height:110px}
+.tbl td{padding:26px 22px;border-top:2px solid #e5eef7;text-align:center;height:110px}.tbl tbody tr:nth-child(even) td:not(:nth-child(3)){background:#f5f9fd}
 .tbl.compact td{height:auto;padding:7px 22px;font-size:32px}.tbl.compact th{padding:12px}
 .tbl td:first-child{white-space:nowrap;font-weight:700;color:var(--navy)}
 .tbl th:nth-child(3),.tbl td:nth-child(3){background:#FFF8EC}
@@ -119,7 +101,7 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 .shot.two img{max-width:48%}
 .vid{flex:1;display:flex;justify-content:center;align-items:center;min-height:0}.vid video{height:100%;max-width:100%;border:3px solid var(--navy);border-radius:14px;box-shadow:12px 14px 0 var(--pale);background:#000}
 .shot.video iframe{height:100%;aspect-ratio:16/9;max-width:100%;border:3px solid var(--navy);border-radius:14px;box-shadow:12px 14px 0 var(--pale);background:#000}
-.shot.three img{max-width:31%}
+.shot.three{gap:24px}.shot.three img{width:calc((100% - 48px)/3);height:auto;max-height:100%;max-width:none}
 .prompt{position:relative;flex:1;min-height:0;margin:0}.prompt.code pre{margin:0;height:100%;max-height:none;overflow:auto;white-space:pre-wrap;background:#fff;border:3px solid var(--navy);border-radius:20px;padding:30px 40px;font:500 33px/1.55 'Noto Sans TC';color:var(--ink);box-shadow:12px 14px 0 var(--pale)}
 .prompt.code.small pre{font-size:23px;line-height:1.42;padding:20px 36px}
 .prompt.code.mid pre{font-size:27px;line-height:1.42;padding:22px 38px}
@@ -127,13 +109,13 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 .steps.compact{gap:18px}.steps.compact li{font-size:38px;padding-top:14px;padding-bottom:14px}.steps.compact .num{width:64px;height:64px;font-size:36px;line-height:64px}
 .prompt.code .copy{font-size:26px;padding:8px 22px;right:20px;top:20px;border-radius:20px}
 .dls{display:flex;flex-wrap:wrap;gap:24px;margin-top:20px}
-.st{display:flex;gap:60px;flex:1;min-height:0;align-items:center}
+.st{display:flex;gap:42px;flex:1;min-height:0;align-items:center}
 .st-img{flex:1.15;display:flex;justify-content:center;min-height:0;height:100%;align-items:center}
 .st-img img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 2px #1E3A6E) drop-shadow(12px 14px 0 #DCEEFB)}
 .st-text{flex:1}
 .st-text p{font-size:42px;line-height:1.6;margin:0 0 28px}
 .st-text p b{color:#B5462E}
-.st.small .st-img{flex:.42}.st.small .st-text p{font-size:29px;line-height:1.22;margin:0 0 3px}
+.st.small .st-img{flex:.55}.st.small .st-text p{font-size:29px;line-height:1.22;margin:0 0 3px}
 .sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .ill{mix-blend-mode:multiply}
 .illus{flex:1;min-height:0;display:flex;justify-content:center}
@@ -148,15 +130,15 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 .srcs{display:grid;grid-template-columns:1fr 1fr;gap:40px;font-size:31px;line-height:1.6}
 .srcs ul{margin:0;padding-left:1em}
 /* 新聞卡 */
-.newsgrid{flex:1;display:grid;gap:40px;align-content:center;min-height:0}
+.newsgrid{flex:1;display:grid;gap:32px;align-content:center;grid-auto-rows:1fr;min-height:0;padding:12px 0 20px}
 .newsgrid.n2{grid-template-columns:1fr 1fr}.newsgrid.n1{grid-template-columns:1fr}.newsgrid.n3{grid-template-columns:repeat(3,1fr)}
-.news{position:relative;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--navy);border-radius:22px;padding:30px 36px 64px;box-shadow:12px 14px 0 var(--pale);overflow:hidden}
+.news{position:relative;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);background:linear-gradient(150deg,#fff,#f6faff);border:2px solid var(--line);border-top:7px solid var(--blue);border-radius:22px;padding:38px 40px 78px;box-shadow:0 16px 36px rgba(30,58,110,.1);overflow:hidden}
 .news::before{content:"NEWS";position:absolute;right:-10px;top:-18px;font:900 120px "Noto Sans TC";color:#F1F6FC;z-index:0}
 .news>*{position:relative}
 .nw-k{display:flex;gap:16px;align-items:center;font-size:28px;color:var(--muted)}
-.nw-k b{background:#B5462E;color:#fff;border-radius:10px;padding:3px 14px;font-size:26px}
-.news h3{margin:18px 0 14px;font:900 50px/1.3 "Noto Sans TC";color:var(--navy)}
-.news p{margin:0;font-size:34px;line-height:1.5}
+.nw-k b{background:var(--navy);color:#fff;border-radius:999px;padding:6px 18px;font-size:25px}.nw-k span{font-weight:700;letter-spacing:.03em}
+.news h3{margin:28px 0 20px;font:900 50px/1.3 "Noto Sans TC";color:var(--navy)}
+.news p{margin:0;font-size:34px;line-height:1.55;color:#4b5d77}
 .nw-go{position:absolute;right:30px;bottom:20px;font:700 24px "Noto Sans TC";color:var(--blue)}
 .ni{flex:1;display:flex;gap:70px;align-items:center;min-height:0}
 .ni-img{height:100%;display:flex;align-items:center}
@@ -385,7 +367,7 @@ addEventListener('keydown',e=>{if(z.classList.contains('on')){e.stopImmediatePro
 // 封面／章節／結尾：臺北天際線＋101＋往上飄的酷AI 對話泡泡；內容頁：右上角旋轉的小 101
 (function(){if(!window.THREE)return;
 const cv=document.createElement('canvas');
-cv.style.cssText='position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;mix-blend-mode:multiply';
+cv.style.cssText='position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;mix-blend-mode:multiply;z-index:0';
 let R;try{R=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true});}catch(e){return;}
 document.documentElement.classList.add('three');
 R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(1920,1080,false);
@@ -421,10 +403,10 @@ function make101(g,s,edgeCol){
     const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),edge);l.position.copy(me.position);l.rotation.copy(me.rotation);tw.add(l);y+=h;};
   put(new THREE.CylinderGeometry(46*s,54*s,40*s,4),40*s,face2);                 // 裙樓
   put(new THREE.CylinderGeometry(30*s,38*s,70*s,4),70*s);                       // 基座（往上收）
-  for(let i=0;i<8;i++)put(new THREE.CylinderGeometry(34*s,26*s,38*s,4),38*s,i%2?face:face2); // 八節「花開富貴」往上外擴
-  put(new THREE.CylinderGeometry(16*s,22*s,26*s,4),26*s,face2);
+  for(let i=0;i<8;i++){put(new THREE.CylinderGeometry(37*s,25*s,38*s,4),38*s,i%2?face:face2);put(new THREE.CylinderGeometry(38*s,38*s,3*s,4),3*s,face2);} // 八節「花開富貴」往上外擴
+  put(new THREE.CylinderGeometry(19*s,29*s,24*s,4),24*s,face2);
   put(new THREE.CylinderGeometry(10*s,13*s,20*s,4),20*s);
-  put(new THREE.CylinderGeometry(1.5*s,3*s,70*s,6),70*s);                       // 塔尖
+  put(new THREE.CylinderGeometry(.8*s,3*s,82*s,6),82*s);                       // 塔尖
   tw.top=y;return tw;}
 // 酷AI 對話泡泡貼圖
 function bubbleTex(txt,bg){const c=document.createElement('canvas');c.width=256;c.height=160;const x=c.getContext('2d');
@@ -435,23 +417,23 @@ const BUB=[['酷AI',0xF0A23B,'#F0A23B'],['AI',0x3B82C4,'#3B82C4'],['?',0x5AA9E6,
 // 2a. 天際線（封面／章節／結尾）
 const city=layer();city.position.set(0,-345,0);
 const T101=make101(city,1.15,0x1F3A6E);T101.position.set(-470,0,40);
-const bx=[],bedge=city.mat(new THREE.LineBasicMaterial({color:0x6FA8DC}),.9),bface=city.mat(new THREE.MeshBasicMaterial({color:0xF3F8FE}),1);
+const bx=[],bedge=city.mat(new THREE.LineBasicMaterial({color:0x6FA8DC}),.75),bface=city.mat(new THREE.MeshBasicMaterial({color:0xE7F1FB}),1),farEdge=city.mat(new THREE.LineBasicMaterial({color:0xB9D3EA}),.5),farFace=city.mat(new THREE.MeshBasicMaterial({color:0xF5F9FD}),1);
 for(let i=0;i<34;i++){const w=30+rnd()*60,h=40+rnd()*170,d=30+rnd()*50,x=-760+i*46+rnd()*20;if(Math.abs(x+470)<70)continue;
-  const geo=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(geo,bface);m.position.set(x,h/2,-160-rnd()*260);city.add(m);
-  const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),bedge);l.position.copy(m.position);city.add(l);bx.push(m.position.clone().add(V(0,h/2,0)));}
+  const far=i%2===0,geo=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(geo,far?farFace:bface);m.position.set(x,h/2,far?-390:-120);city.add(m);
+  const l=new THREE.LineSegments(new THREE.EdgesGeometry(geo),far?farEdge:bedge);l.position.copy(m.position);city.add(l);bx.push(m.position.clone().add(V(0,h/2,0)));}
 const bubs=Array.from({length:9},(_,i)=>{const sp=new THREE.Sprite(city.mat(new THREE.SpriteMaterial({map:BUB[i%BUB.length]}),.95));
   sp.scale.set(70,44,1);sp.u={o:bx[Math.floor(rnd()*bx.length)]||V(0,0,0),t:rnd(),v:.05+rnd()*.06};city.add(sp);return sp;});
 const tip=V(-470,T101.top+40,40),SK=bx.map(p=>[tip,p]).filter((_,i)=>i%3===0);
 city.lines(SK.flat(),0xF2C48A,.35);const skyPulse=pulses(city,SK,10,0xF2994A,16);
 
 // 2b. 右上角小 101（內容頁）＋繞行的酷AI 泡泡
-const hub=layer();hub.position.set(560,120,0);
-const M101=make101(hub,.34,0x1F3A6E);M101.position.y=0;
+const hub=layer();hub.position.set(665,235,0);
+const M101=make101(hub,.20,0x1F3A6E);M101.position.y=0;
 const ring=[];for(let i=0;i<=64;i++){const a=i/64*Math.PI*2;ring.push(V(Math.cos(a)*70,0,Math.sin(a)*70));}
 const rg=[];for(let i=0;i<64;i++)rg.push(ring[i],ring[i+1]);const rl=hub.lines(rg,0xF0A23B,.5);rl.position.y=95;
-const hb=new THREE.Sprite(hub.mat(new THREE.SpriteMaterial({map:BUB[0]}),1));hb.scale.set(54,34,1);hub.add(hb);
+const hb=new THREE.Sprite(hub.mat(new THREE.SpriteMaterial({map:BUB[0]}),1));hb.scale.set(38,24,1);hub.add(hb);
 const hubPulse=()=>{};
-const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const motion=matchMedia('(prefers-reduced-motion: reduce)');let still=motion.matches;motion.addEventListener('change',e=>{still=e.matches;});
 let host=null,last=0,full=true,boost=0,pose=0,idx=0;
 function frame(t){requestAnimationFrame(frame);
   const on=document.querySelector('.slide.on');
@@ -461,7 +443,8 @@ function frame(t){requestAnimationFrame(frame);
   net.fade(full?.55:0,k);city.fade(full?1:0,k);hub.fade(full?0:1,k);boost*=1-Math.min(1,dt*1.6);
   if(!still){net.rotation.y+=(pose+Math.sin(t/9000)*.2-net.rotation.y)*Math.min(1,dt*2.5);net.rotation.x=Math.cos(t/11000)*.1;
     M101.rotation.y=t/4000;const a=t/1500;hb.position.set(Math.cos(a)*70,95+Math.sin(t/700)*6,Math.sin(a)*70);
-    city.rotation.y=Math.sin(t/12000)*.06;bubs.forEach(b=>{b.u.t+=b.u.v*dt;if(b.u.t>1){b.u.t=0;b.u.o=bx[Math.floor(Math.random()*bx.length)];}b.position.set(b.u.o.x,b.u.o.y+30+b.u.t*260,b.u.o.z);b.material.opacity=.95*Math.sin(b.u.t*Math.PI)*city.a;});}
+    city.rotation.y=Math.sin(t/12000)*.06;bubs.forEach(b=>{b.u.t+=b.u.v*dt;if(b.u.t>1){b.u.t=0;b.u.o=bx[Math.floor(Math.random()*bx.length)];}b.position.set(b.u.o.x+Math.sin(t/1800+b.u.t*6)*12,b.u.o.y+30+b.u.t*260,b.u.o.z);const scale=1+.07*Math.sin(t/1200+b.u.t*6);b.scale.set(70*scale,44*scale,1);b.material.opacity=.95*Math.sin(b.u.t*Math.PI)*city.a;});}
+  if(still){M101.rotation.y=0;hb.position.set(55,80,0);city.rotation.y=0;net.rotation.set(0,0,0);bubs.forEach(b=>{b.position.set(b.u.o.x,b.u.o.y+30+b.u.t*260,b.u.o.z);b.scale.set(70,44,1);b.material.opacity=.8*city.a;});}
   const sp=still?0:1+boost*3;if(net.visible)netPulse(dt,sp);if(city.visible)skyPulse(dt,sp);
   R.render(scene,cam);}
 requestAnimationFrame(frame);})();
