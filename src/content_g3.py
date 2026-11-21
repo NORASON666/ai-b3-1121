@@ -6,6 +6,7 @@
 SHOT = "assets/shots/"
 ILL = "assets/illus/"
 OUT = "g3.html"
+BARTEXT = ""  # 小組報告不放中心名稱（Nora 2026-11-21）
 COVER = {"org": "B3 儲備講師培訓｜模組二 小組活動", "h1": "第三組<br><mark>AI 幻覺與偏見</mark>",
          "hand": "國小、國中、高中，各一個課堂", "meta": "2026.11.21（六）　國立臺中教育大學",
          "who": "第三組（臺北市）　黃馨誼・周凡淇・何敏華・戴貝羽・涂朝淵", "end": "用 AI 的答案，一定附查證來源"}

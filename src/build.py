@@ -7,6 +7,7 @@ _m = importlib.import_module(CONTENT)
 S, SHOT, ILL = _m.S, _m.SHOT, _m.ILL
 COVER = getattr(_m, 'COVER', None)
 OUT = getattr(_m, 'OUT', 'index.html')
+BARTEXT = getattr(_m, 'BARTEXT', '臺北市數位學習中心')
 
 BASE = os.path.dirname(__file__)
 sup_path = os.path.join(BASE, "supplements.json")
@@ -214,6 +215,6 @@ for d in S:
     side.append({"n": label, "notes": note, "sup": sh})
 
 tpl = open(os.path.join(BASE, "template.html")).read()
-out = tpl.replace("<!--SLIDES-->", "\n".join(slides)).replace("/*SIDE*/[]", json.dumps(side, ensure_ascii=False))
+out = tpl.replace("<!--SLIDES-->", "\n".join(slides)).replace("/*SIDE*/[]", json.dumps(side, ensure_ascii=False)).replace("/*BARTEXT*/'臺北市數位學習中心'", json.dumps(BARTEXT, ensure_ascii=False))
 open(os.path.join(BASE, "..", "docs", OUT), "w").write(out)
 print("slides", len(slides), "with supplements", sum(1 for s in side if s["sup"]))

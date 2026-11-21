@@ -555,7 +555,7 @@ requestAnimationFrame(frame);})();
 </script>
 <script>
 // 內容頁左下角：臺北市數位學習中心 × 酷AI 標籤
-(function(){const bar=document.createElement('div');bar.id='tpbar';bar.innerHTML='<img src="assets/shots/kuai_logo.png" alt="酷AI系統"><i>臺北市數位學習中心</i>';
+(function(){const bar=document.createElement('div');bar.id='tpbar';const BT="臺北市數位學習中心";bar.innerHTML='<img src="assets/shots/kuai_logo.png" alt="酷AI系統">'+(BT?'<i>'+BT+'</i>':'');
 let host=null;(function tick(){requestAnimationFrame(tick);const on=document.querySelector('.slide.on');
  if(on!==host){host=on;if(on&&!/t-(cover|closing)/.test(on.className))on.appendChild(bar);else bar.remove();}})();})();
 </script>
