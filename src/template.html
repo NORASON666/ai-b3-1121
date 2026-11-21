@@ -178,6 +178,14 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 #secchip button{font:700 15px "Noto Sans TC";border:none;background:#fff;color:var(--navy);border-radius:14px;padding:6px 12px;cursor:pointer}
 #secchip button.act{background:var(--orange);color:#fff}
 @media print{#secchip{display:none}}
+/* 酷AI 元素（取自 ailms.tp.edu.tw 首頁）：logo 膠囊、吉祥物插圖 */
+#tpbar{background:linear-gradient(90deg,#2BB5A8,#5CCFC2);border-radius:999px;padding:5px 16px 5px 12px;color:#fff}
+#tpbar img{height:22px;display:block}
+#tpbar i{background:#fff;color:#1E8F85}
+.kscene{position:absolute;right:44px;top:22px;height:150px;pointer-events:none;z-index:1;filter:drop-shadow(0 6px 10px rgba(30,58,110,.12))}
+.slide.t-cover .kscene,.slide.t-closing .kscene{top:auto;bottom:40px;right:60px;height:430px}
+.slide.t-divider .kscene{top:auto;bottom:34px;right:auto;left:60px;height:230px}
+.klogo{position:absolute;left:60px;top:48px;height:44px;padding:10px 18px;border-radius:14px;background:linear-gradient(90deg,#2BB5A8,#5CCFC2);z-index:2}
 /* 補充按鈕 */
 .supbtn{position:absolute;right:110px;bottom:24px;font:700 28px "Noto Sans TC";color:#fff;background:var(--blue);border:none;border-radius:30px;padding:10px 26px;cursor:pointer;box-shadow:0 4px 0 var(--navy)}
 .supbtn:hover{background:var(--navy)}
@@ -351,6 +359,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b
 addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea'))return;const k=e.key;
   if(k==='h'||k==='H')goSec('nav');else if(k==='1')goSec('m1');else if(k==='2')goSec('m2');else if(k==='3')goSec('m3');});
 const _show=show;show=function(i){_show(i);const s=slides[cur].dataset.sec;document.querySelectorAll('#secchip button').forEach(b=>b.classList.toggle('act',b.dataset.go===s));};
+document.querySelectorAll('.slide').forEach(sl=>{const k=document.createElement('img');k.className='kscene';k.src='assets/shots/kuai_scene.png';k.alt='';sl.appendChild(k);
+  if(/t-(cover|closing)/.test(sl.className)){const l=document.createElement('img');l.className='klogo';l.src='assets/shots/kuai_logo.png';l.alt='酷AI系統';sl.appendChild(l);}});
 addEventListener('resize',fit);fit();
 const m=decodeURIComponent(location.hash).match(/^#p(.+)$/);const k0=m?slides.findIndex(s=>s.dataset.label===m[1]):0;show(k0<0?0:k0);
 </script>
@@ -443,7 +453,7 @@ function frame(t){requestAnimationFrame(frame);
   if(on!==host){host=on;if(!on)return;if(on.classList.contains("t-cover"))on.appendChild(cv);else on.insertBefore(cv,on.firstChild);full=/t-(cover|divider|closing)/.test(on.className);
     idx=[...on.parentNode.children].indexOf(on);pose=((idx%5)-2)*.13;boost=1;}
   if(!host)return;const dt=Math.min((t-last)/1000,.05);last=t;const k=still?1:Math.min(1,dt*5);
-  net.fade(full?.55:0,k);city.fade(full?1:0,k);hub.fade(full?0:1,k);boost*=1-Math.min(1,dt*1.6);
+  net.fade(full?.55:0,k);city.fade(full?1:0,k);hub.fade(0,k);boost*=1-Math.min(1,dt*1.6);
   if(!still){net.rotation.y+=(pose+Math.sin(t/9000)*.2-net.rotation.y)*Math.min(1,dt*2.5);net.rotation.x=Math.cos(t/11000)*.1;
     M101.rotation.y=t/4000;const a=t/1500;hb.position.set(Math.cos(a)*70,95+Math.sin(t/700)*6,Math.sin(a)*70);
     city.rotation.y=Math.sin(t/12000)*.06;bubs.forEach(b=>{b.u.t+=b.u.v*dt;if(b.u.t>1){b.u.t=0;b.u.o=bx[Math.floor(Math.random()*bx.length)];}b.position.set(b.u.o.x+Math.sin(t/1800+b.u.t*6)*12,b.u.o.y+30+b.u.t*260,b.u.o.z);const scale=1+.07*Math.sin(t/1200+b.u.t*6);b.scale.set(70*scale,44*scale,1);b.material.opacity=.95*Math.sin(b.u.t*Math.PI)*city.a;});}
@@ -454,7 +464,7 @@ requestAnimationFrame(frame);})();
 </script>
 <script>
 // 內容頁左下角：臺北市數位學習中心 × 酷AI 標籤
-(function(){const bar=document.createElement('div');bar.id='tpbar';bar.innerHTML='<i>酷AI</i>臺北市數位學習中心';
+(function(){const bar=document.createElement('div');bar.id='tpbar';bar.innerHTML='<img src="assets/shots/kuai_logo.png" alt="酷AI系統"><i>臺北市數位學習中心</i>';
 let host=null;(function tick(){requestAnimationFrame(tick);const on=document.querySelector('.slide.on');
  if(on!==host){host=on;if(on&&!/t-(cover|closing)/.test(on.className))on.appendChild(bar);else bar.remove();}})();})();
 </script>
