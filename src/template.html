@@ -228,6 +228,33 @@ body.uiidle #bar,body.uiidle #secchip{opacity:0;pointer-events:none}
 .wa-art img[src*="illus/"]{border:none;box-shadow:none;background:transparent;mix-blend-mode:multiply;max-height:88%}
 .wa-art figcaption{margin-top:14px;font:500 22px "Noto Sans TC";color:var(--muted)}
 .wa .cards.c4,.wa .cards.c5{grid-template-columns:repeat(2,1fr)}
+/* ── 衝擊轉場：整頁從大到正位＋模糊淡入；元素依序彈出 */
+@media (prefers-reduced-motion:no-preference){
+.slide.on .inner{animation:hit .55s cubic-bezier(.16,1.2,.3,1) both}
+@keyframes hit{0%{opacity:0;transform:scale(1.12) translateY(30px);filter:blur(10px)}60%{opacity:1;filter:blur(0)}100%{transform:none}}
+.slide.on .title span{display:inline-block;animation:wipe .6s .12s cubic-bezier(.2,.9,.2,1) both}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0);transform:translateX(-30px)}to{clip-path:inset(0 0 0 0);transform:none}}
+.slide.on .kicker{animation:pop .45s cubic-bezier(.3,1.6,.5,1) both}
+.slide.on :is(.cards>*,.newsgrid>*,.navgrid>*,.steps>li,.bul>li,.ni-steps>li,.tbl tbody tr,.st-text>p,.shot>img,.shot>figure,.wa-art,.ni-img,.illus){animation:pop .5s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes pop{0%{opacity:0;transform:translateY(40px) scale(.85) rotate(-1.5deg)}100%{opacity:1;transform:none}}
+.slide.on :is(.cards,.newsgrid,.navgrid,.steps,.bul,.ni-steps,.st-text,.shot,.tbl tbody)>*:nth-child(1){animation-delay:.18s}
+.slide.on :is(.cards,.newsgrid,.navgrid,.steps,.bul,.ni-steps,.st-text,.shot,.tbl tbody)>*:nth-child(2){animation-delay:.3s}
+.slide.on :is(.cards,.newsgrid,.navgrid,.steps,.bul,.ni-steps,.st-text,.shot,.tbl tbody)>*:nth-child(3){animation-delay:.42s}
+.slide.on :is(.cards,.newsgrid,.navgrid,.steps,.bul,.ni-steps,.st-text,.shot,.tbl tbody)>*:nth-child(4){animation-delay:.54s}
+.slide.on :is(.cards,.newsgrid,.navgrid,.steps,.bul,.ni-steps,.st-text,.shot,.tbl tbody)>*:nth-child(5){animation-delay:.66s}
+.slide.on :is(.cards,.newsgrid,.navgrid,.steps,.bul,.ni-steps,.st-text,.shot,.tbl tbody)>*:nth-child(n+6){animation-delay:.78s}
+.slide.on .wa-art{animation-delay:.5s}
+.slide.on .foot{animation:slam .5s .85s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes slam{0%{opacity:0;transform:scale(1.4)}100%{opacity:1;transform:none}}
+.slide.on .stat .big{animation:countup .8s .3s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes countup{0%{opacity:0;transform:scale(.3)}100%{opacity:1;transform:none}}
+.slide.on.t-divider .dv-title,.slide.on .cover h1{animation:smash .7s .1s cubic-bezier(.2,1.5,.35,1) both}
+@keyframes smash{0%{opacity:0;transform:scale(2.2);letter-spacing:.3em;filter:blur(6px)}100%{opacity:1;transform:none;letter-spacing:normal;filter:none}}
+.slide.on .quote{animation:smash .8s .15s both}
+#deck::after{content:"";position:absolute;inset:0;pointer-events:none;background:#fff;opacity:0}
+#deck.flash::after{animation:flash2 .35s ease-out}
+@keyframes flash2{0%{opacity:.55}100%{opacity:0}}
+}
 /* 補充按鈕 */
 .supbtn{position:absolute;right:110px;bottom:24px;font:700 28px "Noto Sans TC";color:#fff;background:var(--blue);border:none;border-radius:30px;padding:10px 26px;cursor:pointer;box-shadow:0 4px 0 var(--navy)}
 .supbtn:hover{background:var(--navy)}
@@ -401,7 +428,7 @@ document.addEventListener('click',e=>{const h=e.target.closest('[data-href]');if
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){e.stopPropagation();goSec(b.dataset.go);}});
 addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea'))return;const k=e.key;
   if(k==='h'||k==='H')goSec('nav');else if(k==='1')goSec('m1');else if(k==='2')goSec('m2');else if(k==='3')goSec('m3');});
-const _show=show;show=function(i){_show(i);const s=slides[cur].dataset.sec;document.querySelectorAll('#secchip button').forEach(b=>b.classList.toggle('act',b.dataset.go===s));};
+const _show=show;show=function(i){const d=document.getElementById('deck');d.classList.remove('flash');void d.offsetWidth;d.classList.add('flash');_show(i);const s=slides[cur].dataset.sec;document.querySelectorAll('#secchip button').forEach(b=>b.classList.toggle('act',b.dataset.go===s));};
 document.querySelectorAll('.slide').forEach(sl=>{const k=document.createElement('img');k.className='kscene';k.src='assets/shots/kuai_scene.png';k.alt='';sl.appendChild(k);
   if(/t-(cover|closing)/.test(sl.className)){const l=document.createElement('img');l.className='klogo';l.src='assets/shots/kuai_logo.png';l.alt='酷AI系統';sl.appendChild(l);}});
 
