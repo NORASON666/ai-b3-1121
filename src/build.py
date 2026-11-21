@@ -1,7 +1,12 @@
 # 產生 docs/index.html：content.py（版面與講稿）＋ supplements.json（補充資料）
 import html, json, os, re, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from content import S, SHOT, ILL
+import importlib
+CONTENT = os.environ.get('DECK', 'content')
+_m = importlib.import_module(CONTENT)
+S, SHOT, ILL = _m.S, _m.SHOT, _m.ILL
+COVER = getattr(_m, 'COVER', None)
+OUT = getattr(_m, 'OUT', 'index.html')
 
 BASE = os.path.dirname(__file__)
 sup_path = os.path.join(BASE, "supplements.json")
@@ -54,6 +59,13 @@ def foot(d):
 
 def render(d):
     t = d["t"]
+    if t == "cover" and COVER:
+        return f'''<div class="cover"><div class="cover-text">
+<div class="org">{e(COVER["org"])}</div><h1>{COVER["h1"]}</h1><div class="hand">{e(COVER["hand"])}</div>
+<div class="meta">{e(COVER["meta"])}</div><div class="who"><span>{e(COVER["who"])}</span></div></div></div>'''
+    if t == "closing" and COVER:
+        return f'''<div class="cover"><div class="cover-text"><h1><mark>謝謝聆聽！</mark></h1><div class="hand">{e(COVER["end"])}</div>
+<div class="who"><span>{e(COVER["who"])}</span></div></div></div>'''
     if t == "cover":
         return f'''<div class="cover"><div class="cover-text">
 <div class="org">B3 數位教學指引儲備講師培訓工作坊｜試講</div>
@@ -203,5 +215,5 @@ for d in S:
 
 tpl = open(os.path.join(BASE, "template.html")).read()
 out = tpl.replace("<!--SLIDES-->", "\n".join(slides)).replace("/*SIDE*/[]", json.dumps(side, ensure_ascii=False))
-open(os.path.join(BASE, "..", "docs", "index.html"), "w").write(out)
+open(os.path.join(BASE, "..", "docs", OUT), "w").write(out)
 print("slides", len(slides), "with supplements", sum(1 for s in side if s["sup"]))
