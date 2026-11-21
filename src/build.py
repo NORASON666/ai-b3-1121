@@ -79,7 +79,7 @@ def render(d):
         cls = "shot wide" if d.get("wide") else "shot"
         return f'{head(d)}<div class="{cls}"><img src="{SHOT}{d["img"]}" alt=""></div>{foot(d)}'
     if t == "news":
-        cs = "".join(f'<a class="news{" has-shot" if n.get("shot") else ""}" href="{html.escape(n["url"])}" target="_blank" rel="noopener">{f'<img class="nw-shot" src="{SHOT}{n["shot"]}" alt="">' if n.get("shot") else ""}<div class="nw-k"><b>{e(n["outlet"])}</b><span>{e(n["date"])}</span></div><h3>{e(n["head"])}</h3><p>{e(n["line"])}</p><span class="nw-go">看原文 ↗</span></a>' for n in d["items"])
+        cs = "".join(f'<a class="news{" has-shot" if n.get("shot") else ""}" href="{html.escape(n["url"])}" target="_blank" rel="noopener">{f'<img class="nw-shot" src="{SHOT}{n["shot"]}" alt="">' if n.get("shot") else ""}<div class="nw-text"><div class="nw-k"><b>{e(n["outlet"])}</b><span>{e(n["date"])}</span></div><h3>{e(n["head"])}</h3><p>{e(n["line"])}</p><span class="nw-go">看原文 ↗</span></div></a>' for n in d["items"])
         return f'{head(d)}<div class="newsgrid n{len(d["items"])}">{cs}</div>{foot(d)}'
     if t == "newsimg":
         lis = "".join(f'<li><b>{e(h)}</b><span>{e(b)}</span></li>' for h, b in d["items"])
@@ -108,6 +108,8 @@ def render(d):
             return f'{head(d)}<div class="shot video"><iframe src="https://www.youtube.com/embed/{d["yt"]}" title="{e(d["title"])}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>{foot(d)}'
         return f'{head(d)}<div class="vid"><video controls preload="metadata" playsinline poster="assets/video/{d["poster"]}" src="assets/video/{d["src_file"]}"></video></div>{foot(d)}'
     if t == "illus":
+        if d.get("ill_img"):
+            return f'{head(d)}<div class="illus"><img class="ill" src="{SHOT}{d["ill_img"]}" alt=""></div>{foot(d)}'
         return f'{head(d)}<div class="illus">{ill(d["ill"])}</div>{foot(d)}'
     if t == "cards":
         cs = "".join(f'<div class="card"><h3>{e(h)}</h3><p>{e(b)}</p>{f"<div class=note>{e(n)}</div>" if n else ""}</div>' for h, b, n in d["cards"])
