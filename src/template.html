@@ -146,10 +146,27 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 .ni-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:26px;flex:1}
 .ni-steps li{display:flex;gap:26px;align-items:center;background:#fff;border:3px solid var(--navy);border-radius:18px;padding:18px 28px;font-size:40px}
 .ni-steps b{flex:none;font:900 44px "Noto Sans TC";color:#fff;background:var(--orange);border-radius:12px;padding:4px 16px}
+.news.has-shot{padding-top:0}.nw-shot{display:block;margin:0 -36px 18px;width:calc(100% + 72px);height:300px;object-fit:cover;object-position:top;border-bottom:3px solid var(--navy)}
+.newsgrid.n1 .nw-shot{height:420px}
+.slide .inner .news img{cursor:pointer}
 /* 臺北／酷AI 底部標籤 */
 #tpbar{position:absolute;left:40px;bottom:22px;display:flex;align-items:center;gap:12px;font:700 22px "Noto Sans TC";color:var(--navy);pointer-events:none}
 #tpbar i{font-style:normal;background:var(--orange);color:#fff;border-radius:999px;padding:2px 14px;font-size:20px}
 @media print{#tpbar{display:none}}
+/* 導覽頁 */
+.navgrid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:44px;align-content:center}
+.navcard{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:14px;background:#fff;border:3px solid var(--navy);border-radius:28px;padding:40px 40px 80px;box-shadow:12px 14px 0 var(--pale);cursor:pointer;font-family:"Noto Sans TC";color:var(--ink);transition:transform .15s,box-shadow .15s}
+.navcard:hover{transform:translateY(-6px);box-shadow:12px 20px 0 #FFE2B8}
+.nv-k{font:900 30px "Noto Sans TC";color:#fff;background:var(--orange);border-radius:999px;padding:4px 22px}
+.nv-t{font:900 64px/1.15 "Noto Sans TC";color:var(--navy)}
+.nv-m{font:700 34px "Noto Sans TC";color:var(--blue)}
+.nv-d{font-size:32px;line-height:1.5}
+.nv-go{position:absolute;right:34px;bottom:26px;font:900 30px "Noto Sans TC";color:var(--orange)}
+.flow5 .card h3{font-size:36px}.flow5 .card p{font-size:30px}
+#secchip{position:fixed;left:14px;top:12px;z-index:11;display:flex;gap:6px;padding:5px;background:rgba(255,255,255,.92);border:2px solid var(--navy);border-radius:22px;box-shadow:0 4px 14px rgba(30,58,110,.2)}
+#secchip button{font:700 15px "Noto Sans TC";border:none;background:#fff;color:var(--navy);border-radius:14px;padding:6px 12px;cursor:pointer}
+#secchip button.act{background:var(--orange);color:#fff}
+@media print{#secchip{display:none}}
 /* 補充按鈕 */
 .supbtn{position:absolute;right:110px;bottom:24px;font:700 28px "Noto Sans TC";color:#fff;background:var(--blue);border:none;border-radius:30px;padding:10px 26px;cursor:pointer;box-shadow:0 4px 0 var(--navy)}
 .supbtn:hover{background:var(--navy)}
@@ -250,6 +267,7 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 <div id="timerBadge" title="點一下打開計時設定"><span id="tLeft">05:00</span><span class="bar"><i id="tBar"></i></span></div>
 <div id="edgeGlow"></div>
 <div id="timesUp">時間到！</div>
+<nav id="secchip"><button data-go="nav">導覽 H</button><button data-go="m1">模組一 1</button><button data-go="m2">模組二 2</button><button data-go="m3">模組三 3</button></nav>
 <nav id="bar"><button id="bPrev">◀</button><button id="bTimer">⏱ 計時 T</button><button id="bGrid">總覽 O</button><button id="bSup">補充 S</button><button id="bNotes">講稿 N</button><button id="bFull">全螢幕 F</button><button id="bNext">▶</button></nav>
 <script>
 const SIDE=/*SIDE*/[];
@@ -313,6 +331,13 @@ badge.onclick=()=>tp.classList.toggle('open');
 up.onclick=()=>{up.classList.remove('open');badge.classList.remove('show');};
 bTimer.onclick=()=>tp.classList.toggle('open');
 tp.addEventListener('keydown',e=>e.stopPropagation());
+
+// 導覽：卡片與左上角按鈕跳到各模組第一頁；H 導覽頁、1/2/3 模組
+function goSec(g){const k=g==='nav'?slides.findIndex(s=>s.classList.contains('t-nav')):slides.findIndex(s=>s.dataset.sec===g);if(k>=0)show(k);}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){e.stopPropagation();goSec(b.dataset.go);}});
+addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea'))return;const k=e.key;
+  if(k==='h'||k==='H')goSec('nav');else if(k==='1')goSec('m1');else if(k==='2')goSec('m2');else if(k==='3')goSec('m3');});
+const _show=show;show=function(i){_show(i);const s=slides[cur].dataset.sec;document.querySelectorAll('#secchip button').forEach(b=>b.classList.toggle('act',b.dataset.go===s));};
 addEventListener('resize',fit);fit();
 const m=decodeURIComponent(location.hash).match(/^#p(.+)$/);const k0=m?slides.findIndex(s=>s.dataset.label===m[1]):0;show(k0<0?0:k0);
 </script>
@@ -322,7 +347,7 @@ const m=decodeURIComponent(location.hash).match(/^#p(.+)$/);const k0=m?slides.fi
 (function(){const z=document.getElementById('zoom'),zi=z.querySelector('img');
 document.addEventListener('click',e=>{const t=e.target;
   if(z.classList.contains('on')){z.classList.remove('on');return;}
-  if(t.tagName==='IMG'&&t.closest('.slide .inner')&&!/cover_bg/.test(t.src)){zi.src=t.src;z.classList.add('on');}});
+  if(t.tagName==='IMG'&&t.closest('.slide .inner')&&!t.closest('a')&&!/cover_bg/.test(t.src)){zi.src=t.src;z.classList.add('on');}});
 addEventListener('keydown',e=>{if(z.classList.contains('on')){e.stopImmediatePropagation();e.preventDefault();z.classList.remove('on');}},true);
 })();
 </script>

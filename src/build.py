@@ -79,11 +79,17 @@ def render(d):
         cls = "shot wide" if d.get("wide") else "shot"
         return f'{head(d)}<div class="{cls}"><img src="{SHOT}{d["img"]}" alt=""></div>{foot(d)}'
     if t == "news":
-        cs = "".join(f'<a class="news" href="{html.escape(n["url"])}" target="_blank" rel="noopener"><div class="nw-k"><b>{e(n["outlet"])}</b><span>{e(n["date"])}</span></div><h3>{e(n["head"])}</h3><p>{e(n["line"])}</p><span class="nw-go">看原文 ↗</span></a>' for n in d["items"])
+        cs = "".join(f'<a class="news{" has-shot" if n.get("shot") else ""}" href="{html.escape(n["url"])}" target="_blank" rel="noopener">{f'<img class="nw-shot" src="{SHOT}{n["shot"]}" alt="">' if n.get("shot") else ""}<div class="nw-k"><b>{e(n["outlet"])}</b><span>{e(n["date"])}</span></div><h3>{e(n["head"])}</h3><p>{e(n["line"])}</p><span class="nw-go">看原文 ↗</span></a>' for n in d["items"])
         return f'{head(d)}<div class="newsgrid n{len(d["items"])}">{cs}</div>{foot(d)}'
     if t == "newsimg":
         lis = "".join(f'<li><b>{e(h)}</b><span>{e(b)}</span></li>' for h, b in d["items"])
         return f'{head(d)}<div class="ni"><div class="ni-img"><img src="{SHOT}{d["img"]}" alt=""></div><ol class="ni-steps">{lis}</ol></div>{foot(d)}'
+    if t == "nav":
+        cs = "".join(f'<button class="navcard" data-go="{g}"><span class="nv-k">{e(k)}</span><span class="nv-t">{e(tt)}</span><span class="nv-m">{e(m)}</span><span class="nv-d">{e(dd)}</span><span class="nv-go">進入 ➜</span></button>' for g, k, tt, m, dd in d["items"])
+        return f'{head(d)}<div class="navgrid">{cs}</div>{foot(d)}'
+    if t == "flow5":
+        cs = "".join(f'<div class="card"><h3>{e(h)}</h3><p>{e(x)}</p></div>' for h, x in d["steps"])
+        return f'{head(d)}<div class="cards c{len(d["steps"])} arrows flow5">{cs}</div>{foot(d)}'
     if t == "shot2":
         imgs = "".join(f'<img src="{SHOT}{i}" alt="">' for i in d["imgs"])
         cls = "three" if len(d["imgs"]) == 3 else "two"
@@ -177,7 +183,9 @@ def sup_html(n):
 CUR_SUP = []
 slides, side = [], []
 main, spare = 0, 0
+sec = "home"
 for d in S:
+    sec = d.get("sec", sec)
     # 主體頁編 1、2、3…；備用段（spare=True）編「備1、備2…」
     if d.get("spare"):
         spare += 1; label = f"備{spare}"
@@ -188,7 +196,7 @@ for d in S:
     CUR_SUP = d.get("sup", [])
     sh, cnt = sup_html(label)
     badge = f'<button class="supbtn" title="補充資料（S）">📎 補充（{cnt} 則）</button>' if cnt else ""
-    slides.append(f'<section class="slide t-{d["t"]}" id="p{label}" data-label="{label}"><div class="inner">{body}</div>{badge}<div class="pno">{label}</div></section>')
+    slides.append(f'<section class="slide t-{d["t"]}" id="p{label}" data-label="{label}" data-sec="{sec}"><div class="inner">{body}</div>{badge}<div class="pno">{label}</div></section>')
     side.append({"n": label, "notes": note, "sup": sh})
 
 tpl = open(os.path.join(BASE, "template.html")).read()
