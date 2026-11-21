@@ -186,6 +186,11 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 .slide.t-cover .kscene,.slide.t-closing .kscene{top:auto;bottom:40px;right:60px;height:430px}
 .slide.t-divider .kscene{top:auto;bottom:34px;right:auto;left:60px;height:230px}
 .klogo{position:absolute;left:60px;top:48px;height:44px;padding:10px 18px;border-radius:14px;background:linear-gradient(90deg,#2BB5A8,#5CCFC2);z-index:2}
+/* 工具列：貼齊最上緣、平常半透明，滑鼠移上去才清楚；滑鼠 2 秒不動就收起 */
+#bar,#secchip{top:2px!important;opacity:.18;transition:opacity .25s,transform .25s;transform-origin:top center}
+#bar{transform:translateX(-50%) scale(.82)}#secchip{transform:scale(.82);transform-origin:top left}
+#bar:hover,#secchip:hover,body.uiwake #bar,body.uiwake #secchip{opacity:.95}
+body.uiidle #bar,body.uiidle #secchip{opacity:0;pointer-events:none}
 /* 補充按鈕 */
 .supbtn{position:absolute;right:110px;bottom:24px;font:700 28px "Noto Sans TC";color:#fff;background:var(--blue);border:none;border-radius:30px;padding:10px 26px;cursor:pointer;box-shadow:0 4px 0 var(--navy)}
 .supbtn:hover{background:var(--navy)}
@@ -384,6 +389,10 @@ addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,text
 const _show=show;show=function(i){_show(i);const s=slides[cur].dataset.sec;document.querySelectorAll('#secchip button').forEach(b=>b.classList.toggle('act',b.dataset.go===s));};
 document.querySelectorAll('.slide').forEach(sl=>{const k=document.createElement('img');k.className='kscene';k.src='assets/shots/kuai_scene.png';k.alt='';sl.appendChild(k);
   if(/t-(cover|closing)/.test(sl.className)){const l=document.createElement('img');l.className='klogo';l.src='assets/shots/kuai_logo.png';l.alt='酷AI系統';sl.appendChild(l);}});
+
+// 工具列：滑鼠移動時短暫顯示，2 秒不動就隱藏
+(function(){let tm;const b=document.body;function wake(){b.classList.add('uiwake');b.classList.remove('uiidle');clearTimeout(tm);tm=setTimeout(()=>{b.classList.remove('uiwake');b.classList.add('uiidle');},2000);}
+addEventListener('mousemove',wake,{passive:true});addEventListener('touchstart',wake,{passive:true});})();
 addEventListener('resize',fit);fit();
 const m=decodeURIComponent(location.hash).match(/^#p(.+)$/);const k0=m?slides.findIndex(s=>s.dataset.label===m[1]):0;show(k0<0?0:k0);
 </script>
