@@ -185,13 +185,41 @@ ol.bul li::marker{font-weight:900;color:var(--blue)}
 #tpbar i{background:#fff;color:#1E8F85}
 .kscene{position:absolute;right:44px;top:22px;height:150px;pointer-events:none;z-index:1;filter:drop-shadow(0 6px 10px rgba(30,58,110,.12))}
 .slide.t-cover .kscene,.slide.t-closing .kscene{top:auto;bottom:40px;right:60px;height:430px}
-.slide.t-divider .kscene{top:auto;bottom:34px;right:auto;left:60px;height:230px}
+.slide.t-divider .kscene{top:auto;bottom:28px;right:auto;left:560px;height:190px}
 .klogo{position:absolute;left:60px;top:48px;height:44px;padding:10px 18px;border-radius:14px;background:linear-gradient(90deg,#2BB5A8,#5CCFC2);z-index:2}
 /* 工具列：貼齊最上緣、平常半透明，滑鼠移上去才清楚；滑鼠 2 秒不動就收起 */
 #bar,#secchip{top:2px!important;opacity:.18;transition:opacity .25s,transform .25s;transform-origin:top center}
 #bar{transform:translateX(-50%) scale(.82)}#secchip{transform:scale(.82);transform-origin:top left}
 #bar:hover,#secchip:hover,body.uiwake #bar,body.uiwake #secchip{opacity:.95}
 body.uiidle #bar,body.uiidle #secchip{opacity:0;pointer-events:none}
+/* ── 三個模組三種視覺（共用酷AI／酷課雲元素：logo 膠囊、吉祥物、酷課雲標籤） */
+/* 模組一：航海（指引是一艘船）— 酷AI 青綠＋海浪 */
+.slide[data-sec=m1]{--navy:#0E4F5C;--ink:#16343b;--blue:#1E8F85;--sky:#5CCFC2;--pale:#D3F1EC;--orange:#F0A23B;--line:#B9E2DC;
+  background-color:#F5FCFB;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='60'><path d='M0 40 Q30 25 60 40 T120 40 T180 40 T240 40' fill='none' stroke='%23CDEFEA' stroke-width='3'/></svg>");background-size:240px 60px}
+.slide[data-sec=m1]::before{background:linear-gradient(90deg,#2BB5A8,#5CCFC2 55%,#F0A23B)}
+.slide[data-sec=m1] .slide .kicker,.slide[data-sec=m1] .kicker{background:#1E8F85}
+.slide[data-sec=m1] .tbl th:nth-child(3){background:#1E8F85}.slide[data-sec=m1] .tbl td:nth-child(3){background:#EFFAF8}
+/* 模組二：新聞編輯台（七大風險配新聞）— 報紙紙張＋朱紅 */
+.slide[data-sec=m2]{--navy:#2B2D42;--ink:#2B2D42;--blue:#C2410C;--sky:#F08A5D;--pale:#FDE3D8;--orange:#E85D3F;--line:#EBCFC3;
+  background-color:#FFFBF5;background-image:repeating-linear-gradient(0deg,transparent 0 33px,#F3E6D8 33px 34px)}
+.slide[data-sec=m2]::before{background:linear-gradient(90deg,#2B2D42 0 30%,#E85D3F 30% 70%,#2B2D42 70%)}
+.slide[data-sec=m2] .kicker{background:#2B2D42}.slide[data-sec=m2] .kicker::before{background:#E85D3F}
+.slide[data-sec=m2] .title span{background:linear-gradient(transparent 62%,#FDE3D8 62%)}
+.slide[data-sec=m2] .tbl th:nth-child(3){background:#E85D3F}.slide[data-sec=m2] .tbl td:nth-child(3){background:#FFF3EE}
+.slide[data-sec=m2] .card,.slide[data-sec=m2] .news,.slide[data-sec=m2] .steps li{border-radius:6px}
+/* 模組三：教室方格紙（AI 賦能教學）— 酷課雲藍紫＋方格 */
+.slide[data-sec=m3]{--navy:#33287A;--ink:#2a2550;--blue:#5B47B5;--sky:#8C7BE0;--pale:#E9E3FB;--orange:#F0A23B;--line:#D6CFF2;
+  background-color:#FBFAFF;background-image:linear-gradient(#EEEAFB 1px,transparent 1px),linear-gradient(90deg,#EEEAFB 1px,transparent 1px);background-size:40px 40px}
+.slide[data-sec=m3]::before{background:linear-gradient(90deg,#5B47B5,#8C7BE0 55%,#F0A23B)}
+.slide[data-sec=m3] .kicker{background:#5B47B5}
+.slide[data-sec=m3] .tbl th:nth-child(3){background:#7A5BD0}.slide[data-sec=m3] .tbl td:nth-child(3){background:#F5F2FE}
+/* 章節頁：大號模組編號浮水印＋「臺北酷課雲 × 酷AI」標籤 */
+.slide.t-divider .dvno{position:absolute;right:70px;top:-10px;font:900 360px/1 "Noto Sans TC";color:var(--pale);opacity:.9;z-index:0;pointer-events:none}
+.slide.t-divider .divider{position:relative;z-index:1}
+.cooc-chip{position:absolute;left:120px;top:60px;display:flex;align-items:center;gap:12px;font:900 24px "Noto Sans TC";color:#fff;background:linear-gradient(90deg,#2BB5A8,#5CCFC2);border-radius:999px;padding:8px 22px 8px 12px;z-index:2}
+.cooc-chip img{height:26px}
+.slide[data-sec=m2] .cooc-chip{background:linear-gradient(90deg,#2B2D42,#E85D3F)}
+.slide[data-sec=m3] .cooc-chip{background:linear-gradient(90deg,#5B47B5,#8C7BE0)}
 /* 補充按鈕 */
 .supbtn{position:absolute;right:110px;bottom:24px;font:700 28px "Noto Sans TC";color:#fff;background:var(--blue);border:none;border-radius:30px;padding:10px 26px;cursor:pointer;box-shadow:0 4px 0 var(--navy)}
 .supbtn:hover{background:var(--navy)}
@@ -372,6 +400,8 @@ document.querySelectorAll('.slide').forEach(sl=>{const k=document.createElement(
 // 工具列：滑鼠移動時短暫顯示，2 秒不動就隱藏
 (function(){let tm;const b=document.body;function wake(){b.classList.add('uiwake');b.classList.remove('uiidle');clearTimeout(tm);tm=setTimeout(()=>{b.classList.remove('uiwake');b.classList.add('uiidle');},2000);}
 addEventListener('mousemove',wake,{passive:true});addEventListener('touchstart',wake,{passive:true});})();
+document.querySelectorAll('.slide.t-divider').forEach(sl=>{const n={m1:'01',m2:'02',m3:'03'}[sl.dataset.sec];if(n){const d=document.createElement('div');d.className='dvno';d.textContent=n;sl.querySelector('.inner').prepend(d);}
+  const c=document.createElement('div');c.className='cooc-chip';c.innerHTML='<img src="assets/shots/kuai_logo.png" alt="酷AI">臺北酷課雲 × 酷AI';sl.appendChild(c);});
 addEventListener('resize',fit);fit();
 {const g=new URLSearchParams(location.search).get('go');if(g)setTimeout(()=>goSec(g),0);}
 if(/g3\.html/.test(location.pathname))document.querySelectorAll('#secchip .g3btn').forEach(b=>b.classList.add('act'));
