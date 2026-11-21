@@ -220,6 +220,14 @@ body.uiidle #bar,body.uiidle #secchip{opacity:0;pointer-events:none}
 .cooc-chip img{height:26px}
 .slide[data-sec=m2] .cooc-chip{background:linear-gradient(90deg,#2B2D42,#E85D3F)}
 .slide[data-sec=m3] .cooc-chip{background:linear-gradient(90deg,#5B47B5,#8C7BE0)}
+/* 右側配圖 */
+.wa{display:flex;gap:44px;height:100%;min-height:0}
+.wa-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.wa-art{flex:0 0 36%;margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:0}
+.wa-art img{max-width:100%;max-height:78%;object-fit:contain;border-radius:16px;border:3px solid var(--navy);box-shadow:10px 12px 0 var(--pale);background:#fff}
+.wa-art img[src*="illus/"]{border:none;box-shadow:none;background:transparent;mix-blend-mode:multiply;max-height:88%}
+.wa-art figcaption{margin-top:14px;font:500 22px "Noto Sans TC";color:var(--muted)}
+.wa .cards.c4,.wa .cards.c5{grid-template-columns:repeat(2,1fr)}
 /* 補充按鈕 */
 .supbtn{position:absolute;right:110px;bottom:24px;font:700 28px "Noto Sans TC";color:#fff;background:var(--blue);border:none;border-radius:30px;padding:10px 26px;cursor:pointer;box-shadow:0 4px 0 var(--navy)}
 .supbtn:hover{background:var(--navy)}

@@ -208,6 +208,9 @@ for d in S:
         main += 1; label = str(main)
     note = d.get("notes", "")
     body = render(d)
+    if d.get("art"):  # 右側配圖：公版原圖或 Codex 插圖
+        src = d["art"] if "/" in d["art"] else SHOT + d["art"]
+        body = f'<div class="wa"><div class="wa-main">{body}</div><figure class="wa-art"><img src="{src}" alt="">{f"<figcaption>{e(d[chr(97)+chr(114)+chr(116)+chr(99)+chr(97)+chr(112)])}</figcaption>" if d.get("artcap") else ""}</figure></div>'
     CUR_SUP = d.get("sup", [])
     sh, cnt = sup_html(label)
     badge = f'<button class="supbtn" title="補充資料（S）">📎 補充（{cnt} 則）</button>' if cnt else ""
